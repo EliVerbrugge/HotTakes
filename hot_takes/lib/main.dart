@@ -11,7 +11,7 @@ class HotTakes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Cloud Storage Demo',
+      title: 'HOT TAKEZ',
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
