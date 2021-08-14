@@ -19,12 +19,10 @@ class Authentication {
     if (user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) {
-            return ChangeNotifierProvider(
-              create: (context) => TakesState(),
-              child: HomePage(user),
-            );
-          },
+          builder: (BuildContext context) => ChangeNotifierProvider(
+            create: (context) => TakesState(),
+            builder: (context, child) => HomePage(user),
+          ),
         ),
       );
     }
