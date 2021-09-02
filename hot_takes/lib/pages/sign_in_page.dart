@@ -69,18 +69,6 @@ class _SignInScreenState extends State<SignInScreen> {
                           setState(() {
                             _isSigningIn = false;
                           });
-
-                          if (user != null) {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    ChangeNotifierProvider(
-                                  create: (context) => TakesState(),
-                                  builder: (context, child) => HomePage(user),
-                                ),
-                              ),
-                            );
-                          }
                         },
                         child: Text("Sign in"));
                   }

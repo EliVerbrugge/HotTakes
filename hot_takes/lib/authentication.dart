@@ -65,31 +65,4 @@ class Authentication {
 
     return user;
   }
-
-  static SnackBar customSnackBar({required String content}) {
-    return SnackBar(
-      backgroundColor: Colors.black,
-      content: Text(
-        content,
-        style: TextStyle(color: Colors.redAccent, letterSpacing: 0.5),
-      ),
-    );
-  }
-
-  static Future<void> signOut({required BuildContext context}) async {
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-
-    try {
-      if (!kIsWeb) {
-        await googleSignIn.signOut();
-      }
-      await FirebaseAuth.instance.signOut();
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        Authentication.customSnackBar(
-          content: 'Error signing out. Try again.',
-        ),
-      );
-    }
-  }
 }
