@@ -8,11 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
-  late User _user;
-
-  HomePage(User user) {
-    _user = user;
-  }
+  User? _user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +16,7 @@ class HomePage extends StatelessWidget {
     // This method is rerun every time notifyListeners is called from the Provider.
     //
     final takeState = Provider.of<TakesState>(context);
-    //
+    _user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
         appBar: AppBar(
           title: Text("HotTakes"),
@@ -34,7 +30,7 @@ class HomePage extends StatelessWidget {
             child: Material(
               color: Colors.grey,
               child: Image.network(
-                _user.photoURL!,
+                _user!.photoURL!,
                 fit: BoxFit.fitHeight,
               ),
             ),
@@ -42,7 +38,7 @@ class HomePage extends StatelessWidget {
           SizedBox(
             height: 8,
           ),
-          Text(_user.displayName.toString()),
+          Text(_user!.displayName.toString()),
           SizedBox(
             height: 16,
           ),
@@ -63,15 +59,13 @@ class HomePage extends StatelessWidget {
                           ElevatedButton(
                               onPressed: () => {
                                     takeState.incrementVotes(
-                                        takeState.takes[index].uniqueID,
-                                        takeState.takes[index].voteCount)
+                                        takeState.takes[index].uniqueID)
                                   },
                               child: Icon(Icons.add)),
                           ElevatedButton(
                               onPressed: () => {
                                     takeState.decrementVotes(
-                                        takeState.takes[index].uniqueID,
-                                        takeState.takes[index].voteCount)
+                                        takeState.takes[index].uniqueID)
                                   },
                               child: Icon(Icons.remove)),
                         ],

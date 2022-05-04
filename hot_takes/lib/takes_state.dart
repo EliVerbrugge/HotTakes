@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,6 +18,7 @@ class Take {
 class TakesState with ChangeNotifier {
   // Reference to the database we will be querying for takes
   final databaseReference = FirebaseFirestore.instance;
+  User? _user = FirebaseAuth.instance.currentUser;
 
   // A list of current takes in the DB
   List<Take> takes = [];
@@ -41,18 +43,32 @@ class TakesState with ChangeNotifier {
 
   /// Increments the vote tally for take with [id] and current tally [numVotes]
   void incrementVotes(String id) async {
-    databaseReference
-        .collection('takes')
-        .doc('$id')
-        .update({'votes': FieldValue.increment(1)});
+    DocumentSnapshot ref =
+        await databaseReference.collection("takes").doc('$id').get();
+    List<String> users = List.from(ref.get('users'));
+    if (!users.contains(_user!.uid)) {
+      databaseReference.collection('takes').doc('$id').update({
+        'votes': FieldValue.increment(1),
+        'users': FieldValue.arrayUnion([_user!.uid])
+      });
+    } else {
+      print("Already voted");
+    }
   }
 
   /// Decrements the vote tally for take with [id] and current tally [numVotes]
   void decrementVotes(String id) async {
-    databaseReference
-        .collection('takes')
-        .doc('$id')
-        .update({'votes': FieldValue.increment(-1)});
+    DocumentSnapshot ref =
+        await databaseReference.collection("takes").doc('$id').get();
+    List<String> users = List.from(ref.get('users'));
+    if (!users.contains(_user!.uid)) {
+      databaseReference.collection('takes').doc('$id').update({
+        'votes': FieldValue.increment(-1),
+        'users': FieldValue.arrayUnion([_user!.uid])
+      });
+    } else {
+      print("Already voted");
+    }
   }
 
   /// Listens for updates and triggers update of takes list

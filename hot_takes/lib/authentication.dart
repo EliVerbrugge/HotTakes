@@ -10,26 +10,6 @@ import 'package:hot_takes/takes_state.dart';
 import 'package:provider/provider.dart';
 
 class Authentication {
-  static Future<FirebaseApp> initializeFirebase(
-      {required BuildContext context}) async {
-    FirebaseApp firebaseApp = await Firebase.initializeApp();
-
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (BuildContext context) => ChangeNotifierProvider(
-            create: (context) => TakesState(),
-            builder: (context, child) => HomePage(user),
-          ),
-        ),
-      );
-    }
-
-    return firebaseApp;
-  }
-
   static Future<User?> signInWithGoogle({required BuildContext context}) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;

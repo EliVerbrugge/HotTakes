@@ -51,30 +51,21 @@ class _SignInScreenState extends State<SignInScreen> {
                   ],
                 ),
               ),
-              FutureBuilder(
-                future: Authentication.initializeFirebase(context: context),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Text('Error initializing Firebase');
-                  } else if (snapshot.connectionState == ConnectionState.done) {
-                    return ElevatedButton(
-                        onPressed: () async {
-                          setState(() {
-                            _isSigningIn = true;
-                          });
-
-                          User? user = await Authentication.signInWithGoogle(
-                              context: context);
-
-                          setState(() {
-                            _isSigningIn = false;
-                          });
-                        },
-                        child: Text("Sign in"));
-                  }
-                  return CircularProgressIndicator();
-                },
-              ),
+              ElevatedButton(
+                  onPressed: () async {
+                    User? user =
+                        await Authentication.signInWithGoogle(context: context);
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            ChangeNotifierProvider(
+                          create: (context) => TakesState(),
+                          builder: (context, child) => HomePage(),
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text("Sign in w/ Google"))
             ],
           ),
         ),
