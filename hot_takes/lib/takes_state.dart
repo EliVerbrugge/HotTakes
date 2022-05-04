@@ -40,19 +40,19 @@ class TakesState with ChangeNotifier {
   }
 
   /// Increments the vote tally for take with [id] and current tally [numVotes]
-  void incrementVotes(String id, int numVotes) async {
+  void incrementVotes(String id) async {
     databaseReference
         .collection('takes')
         .doc('$id')
-        .update({'votes': numVotes + 1});
+        .update({'votes': FieldValue.increment(1)});
   }
 
   /// Decrements the vote tally for take with [id] and current tally [numVotes]
-  void decrementVotes(String id, int numVotes) async {
+  void decrementVotes(String id) async {
     databaseReference
         .collection('takes')
         .doc('$id')
-        .update({'votes': numVotes - 1});
+        .update({'votes': FieldValue.increment(-1)});
   }
 
   /// Listens for updates and triggers update of takes list
