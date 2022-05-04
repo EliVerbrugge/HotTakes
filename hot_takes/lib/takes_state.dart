@@ -31,7 +31,7 @@ class TakesState with ChangeNotifier {
   void createTake(String name) async {
     DocumentReference ref = await databaseReference
         .collection("takes")
-        .add({'name': '$name', 'votes': 0});
+        .add({'name': '$name', 'votes': 0, 'users': []});
   }
 
   /// Deletes the take with [id] from the DB permanently
