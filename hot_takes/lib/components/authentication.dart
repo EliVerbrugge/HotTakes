@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hot_takes/main.dart';
 import 'package:hot_takes/pages/home_page.dart';
-import 'package:hot_takes/takes_state.dart';
+import 'package:hot_takes/components/takes_state.dart';
 import 'package:provider/provider.dart';
 
 class Authentication {

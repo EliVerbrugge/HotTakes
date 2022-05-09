@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hot_takes/authentication.dart';
+import 'package:hot_takes/components/authentication.dart';
 import 'package:hot_takes/pages/home_page.dart';
-import 'package:hot_takes/takes_state.dart';
+import 'package:hot_takes/components/takes_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +18,8 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlue,
+      key: UniqueKey(),
+      backgroundColor: Colors.purple.shade300,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(
@@ -37,7 +38,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   children: [
                     SizedBox(height: 20),
                     Text(
-                      'FlutterFire',
+                      'Hot Takes',
                       style: TextStyle(
                         fontSize: 40,
                       ),

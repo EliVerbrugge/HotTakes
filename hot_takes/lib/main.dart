@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:hot_takes/authentication.dart';
+import 'package:hot_takes/components/authentication.dart';
 import 'package:hot_takes/pages/home_page.dart';
 import 'package:hot_takes/pages/sign_in_page.dart';
-import 'package:hot_takes/takes_state.dart';
+import 'package:hot_takes/components/takes_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 
@@ -33,22 +33,9 @@ class HotTakes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'HOT TAKES',
-        theme: ThemeData(
-          primarySwatch: Colors.red,
-        ),
-        home: SignInScreen());
-  }
-}
-
-class AuthExampleApp extends StatelessWidget {
-  const AuthExampleApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Firebase Example App',
-      theme: ThemeData(primarySwatch: Colors.amber),
+      title: 'Hot Takes',
+      theme: ThemeData(primaryColor: Colors.red),
+      key: UniqueKey(),
       home: Scaffold(
         body: LayoutBuilder(
           builder: (context, constraines) {
@@ -59,14 +46,12 @@ class AuthExampleApp extends StatelessWidget {
                   child: Expanded(
                     child: Container(
                       height: double.infinity,
-                      color: Theme.of(context).colorScheme.primary,
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Firebase Auth Desktop',
-                              style: Theme.of(context).textTheme.headline4,
+                              'Hot Takes Desktop',
                             ),
                           ],
                         ),
@@ -81,8 +66,11 @@ class AuthExampleApp extends StatelessWidget {
                   child: StreamBuilder<User?>(
                     stream: FirebaseAuth.instance.authStateChanges(),
                     builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return HomePage();
+                      if (snapshot.hasData && snapshot.data != null) {
+                        return ChangeNotifierProvider<TakesState>(
+                          create: (context) => TakesState(),
+                          child: HomePage(),
+                        );
                       }
                       return SignInScreen();
                     },

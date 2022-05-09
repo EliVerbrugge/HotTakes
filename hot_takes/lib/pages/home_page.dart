@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hot_takes/authentication.dart';
+import 'package:hot_takes/components/authentication.dart';
 import 'package:hot_takes/pages/sign_in_page.dart';
-import 'package:hot_takes/takes_state.dart';
+import 'package:hot_takes/components/takes_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 
@@ -18,23 +18,17 @@ class HomePage extends StatelessWidget {
     final takeState = Provider.of<TakesState>(context);
     _user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
+        key: UniqueKey(),
         appBar: AppBar(
           title: Text("HotTakes"),
+          backgroundColor: Theme.of(context).primaryColor,
         ),
         body: Center(
             child: Column(children: [
           SizedBox(
             height: 16,
           ),
-          ClipOval(
-            child: Material(
-              color: Colors.grey,
-              child: Image.network(
-                _user!.photoURL!,
-                fit: BoxFit.fitHeight,
-              ),
-            ),
-          ),
+          ProfilePic(),
           SizedBox(
             height: 8,
           ),
@@ -86,6 +80,7 @@ class HomePage extends StatelessWidget {
               height: 8,
             ),
             FloatingActionButton(
+              backgroundColor: Theme.of(context).primaryColor,
               onPressed: () async {
                 final myController = TextEditingController();
 
@@ -124,5 +119,20 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ));
+  }
+}
+
+class ProfilePic extends StatelessWidget {
+  User? _user = FirebaseAuth.instance.currentUser;
+
+  Widget build(BuildContext context) {
+    return ClipOval(
+      child: Material(
+        child: Image.network(
+          _user!.photoURL!,
+          fit: BoxFit.fitHeight,
+        ),
+      ),
+    );
   }
 }
