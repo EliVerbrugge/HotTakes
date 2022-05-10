@@ -40,14 +40,16 @@ class _SignInScreenState extends State<SignInScreen> {
                     Text(
                       'Hot Takes',
                       style: TextStyle(
-                        fontSize: 40,
-                      ),
+                          fontSize: 40,
+                          fontWeight: FontWeight.w800,
+                          color: Color.fromARGB(255, 62, 0, 73)),
                     ),
                     Text(
                       'Authentication',
                       style: TextStyle(
-                        fontSize: 40,
-                      ),
+                          fontSize: 40,
+                          fontWeight: FontWeight.w800,
+                          color: Color.fromARGB(255, 62, 0, 73)),
                     ),
                   ],
                 ),

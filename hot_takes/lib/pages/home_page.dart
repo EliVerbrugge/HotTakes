@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
-  User? _user = FirebaseAuth.instance.currentUser;
+  User? _user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,6 @@ class HomePage extends StatelessWidget {
     // This method is rerun every time notifyListeners is called from the Provider.
     //
     final takeState = Provider.of<TakesState>(context);
-    _user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
         key: UniqueKey(),
         appBar: AppBar(
