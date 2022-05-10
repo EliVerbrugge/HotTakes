@@ -8,56 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:807979845276:android:18ae4fbbd9321ba581cf59",
-        "android_client_info": {
-          "package_name": "com.example.hot_takes"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "807979845276-mlm7cq9dairgb3fdt7mibngvh3ot1d0f.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.hot_takes",
-            "certificate_hash": "4f603f68b1443f6fd9143eb734b790e2e709d5c8"
-          }
-        },
-        {
-          "client_id": "807979845276-ejpaap0p3qop3r4hdlfb7errpt004c6q.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDO1ZWxUe7c8WHiMn2w3UEVbbalH6inQLE"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "807979845276-ejpaap0p3qop3r4hdlfb7errpt004c6q.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "807979845276-djfqaocpv7n1i773hm4f9bfoegm0cq94.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.hotTakes"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:807979845276:android:9f3c827a749b66c181cf59",
         "android_client_info": {
           "package_name": "com.hottakes"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "807979845276-5950fbg2073q23vpp8eqqqhkfu2ot0ve.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hottakes",
+            "certificate_hash": "b543249373d1c903462e99f509ee7c1e748545e6"
+          }
+        },
         {
           "client_id": "807979845276-fvg24ua820cpll4aidalrihdbuhrpb2n.apps.googleusercontent.com",
           "client_type": 1,
