@@ -46,19 +46,37 @@ class HomePage extends StatelessWidget {
                       SizedBox(
                         height: 16,
                       ),
-                      Text("${takeState.takes[index].voteCount}"),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            WidgetSpan(child: Icon(Icons.favorite)),
+                            TextSpan(
+                                text: '${takeState.takes[index].agreeCount}'),
+                          ],
+                        ),
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            WidgetSpan(child: Icon(Icons.cancel)),
+                            TextSpan(
+                                text:
+                                    '${takeState.takes[index].disagreeCount}'),
+                          ],
+                        ),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           ElevatedButton(
                               onPressed: () => {
-                                    takeState.incrementVotes(
-                                        takeState.takes[index].uniqueID)
+                                    takeState
+                                        .agree(takeState.takes[index].uniqueID)
                                   },
                               child: Icon(Icons.add)),
                           ElevatedButton(
                               onPressed: () => {
-                                    takeState.decrementVotes(
+                                    takeState.disagree(
                                         takeState.takes[index].uniqueID)
                                   },
                               child: Icon(Icons.remove)),
