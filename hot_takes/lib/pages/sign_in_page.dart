@@ -1,77 +1,88 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hot_takes/components/authentication.dart';
-import 'package:hot_takes/pages/home_page.dart';
-import 'package:hot_takes/components/takes_state.dart';
-import 'package:flutter/foundation.dart';
-import 'package:provider/provider.dart';
+import 'dart:async';
 
-class SignInScreen extends StatefulWidget {
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({key});
+
   @override
-  _SignInScreenState createState() => _SignInScreenState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
-  bool _isSigningIn = false;
+class _LoginPageState extends State<LoginPage> {
+  bool _isLoading = false;
+  bool _redirecting = false;
+  late final TextEditingController _emailController = TextEditingController();
+  late final StreamSubscription<AuthState> _authStateSubscription;
+
+  Future<void> _signIn() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      await Supabase.instance.client.auth.signInWithOAuth(OAuthProvider.google, redirectTo: kDebugMode ? 'https://localhost:3000': 'https://hottakes-1a324.web.app');
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Logged in!')),
+        );
+        _emailController.clear();
+      }
+    } on AuthException catch (error) {
+      SnackBar(
+        content: Text(error.message),
+        backgroundColor: Theme.of(context).colorScheme.error,
+      );
+    } catch (error) {
+      SnackBar(
+        content: const Text('Unexpected error occurred'),
+        backgroundColor: Theme.of(context).colorScheme.error,
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    _authStateSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      if (_redirecting) return;
+      final session = data.session;
+      if (session != null) {
+        _redirecting = true;
+        Navigator.of(context).pushReplacementNamed('Home');
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _authStateSubscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: UniqueKey(),
-      backgroundColor: Colors.purple.shade300,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 16.0,
-            right: 16.0,
-            bottom: 20.0,
+      appBar: AppBar(title: const Text('Sign In')),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+        children: [
+          ElevatedButton(
+            onPressed: _isLoading ? null : _signIn,
+            child: Text("Sign in to Google"),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Row(),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 20),
-                    Text(
-                      'Hot Takes',
-                      style: TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.w800,
-                          color: Color.fromARGB(255, 62, 0, 73)),
-                    ),
-                    Text(
-                      'Authentication',
-                      style: TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.w800,
-                          color: Color.fromARGB(255, 62, 0, 73)),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                  onPressed: () async {
-                    User? user =
-                        await Authentication.signInWithGoogle(context: context);
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            ChangeNotifierProvider(
-                          create: (context) => TakesState(),
-                          builder: (context, child) => HomePage(),
-                        ),
-                      ),
-                    );
-                  },
-                  child: Text("Sign in w/ Google"))
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }
