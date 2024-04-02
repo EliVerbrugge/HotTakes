@@ -114,6 +114,9 @@ class _HotTakes extends State<HotTakes> {
         });
         return MaterialPageRoute(builder: (context) => VotePage());
       case "Login":
+        setState(() {
+          showBar = false;
+        });
         return MaterialPageRoute(builder: (context) => LoginPage());
       case "Splash":
         return MaterialPageRoute(builder: (context) => SplashPage());

@@ -30,6 +30,9 @@ dependencies:
   supabase_flutter: ^2.3.4
   appinio_swiper: ^2.1.0
   material_design_icons_flutter: ^7.0.7296
+  synchronized: ^3.1.0+1
+  get: ^4.6.6
+
 
 dev_dependencies:
   flutter_test:
@@ -49,7 +52,8 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
-
+  assets:
+    - assets/img/take_icon.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

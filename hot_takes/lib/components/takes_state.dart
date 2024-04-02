@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:synchronized/synchronized.dart';
 
 
 class Take {
@@ -10,15 +13,17 @@ class Take {
   DateTime created = DateTime.fromMicrosecondsSinceEpoch(0);
   String takeName = "";
   String userId = "";
+  String? userName = "";
 
 
-  Take(String name, int agrees, int disagrees, int id, DateTime date, String user_id) {
+  Take(String name, int agrees, int disagrees, int id, DateTime date, String user_id, String? user_name) {
     takeName = name;
     agreeCount = agrees;
     disagreeCount = disagrees;
     take_id = id;
     userId = user_id;
     created = date;
+    userName = user_name;
   }
 
   Take.fromJson(Map<String, dynamic> json)
@@ -27,59 +32,63 @@ class Take {
         agreeCount = json['agrees'] as int;
         disagreeCount = json['disagrees'] as int;
         take_id = json['take_id'] as int;
-        userId = json['author_id'] as String;
+        userId = json['author_user_id'] as String;
         created = DateTime.parse(json['created_at']);
+        userName = json['user_name'] as String?;
   }
 }
 
 class TakesState extends ChangeNotifier {
+  
   // Reference to the database we will be querying for takes
   final databaseReference = Supabase.instance;
   final myUserId = Supabase.instance.client.auth.currentUser!.id;
+
   final int step = 5;
   static int currentPos = 0;
-  int currentIndex = 0;
-  bool gettingCards = false;
+  
   // A list of current takes in the DB
   List<Take> takes = [];
 
-  TakesState() {
-    fetchTakes();
+  // Lock for async code
+  final Lock _lock = Lock();
+
+  TakesState()
+  {
+    fetchTakes(5);
   }
 
-  bool outOfCards()
+  bool isOutOfCards()
   {
-    if(takes.isEmpty && !gettingCards)
+    if(takes.isEmpty)
     {
-      fetchTakes();
+      fetchTakes(5);
     }
     return takes.isEmpty;
   }
 
-  List<int> getPagination(int page, int size)
-  {
-    int from = page * size;
-    int to = from + size;
+  void fetchTakes(int n) async {
+    await _lock.synchronized(() async {
+      final data = await databaseReference.client
+        .rpc('get_takes_without_votes', params: { 'client_user_id': myUserId})
+        .range(currentPos,currentPos+(n-1));
 
-    return [from, to];
-  }
+      if(data.length < n)
+      {
+        n = data.length;
+      }
 
-  void fetchTakes() async {
-    gettingCards = true;
-    List<int> pagination = getPagination(currentPos, step);
-    final data = await databaseReference.client
-      .from('Takes')
-      .select()
-      .order("take_id", ascending: true)
-      .range(pagination[0],pagination[1]);
-
-    currentPos++;
-    for(Map<String, dynamic> obj in data)
-    {
-      takes.add(Take.fromJson(obj));
-    }
-    notifyListeners();
-    gettingCards = false;
+      if(n > 0)
+      {
+        currentPos+=n;
+        for(Map<String, dynamic> obj in data)
+        {
+          print(obj);
+          takes.add(Take.fromJson(obj));
+        }
+        notifyListeners();
+      }
+    });
   }
 
   /// Creates a take with [name] in the remote DB
@@ -88,25 +97,12 @@ class TakesState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void loadAhead() async {
-    gettingCards = true;
+  void voted() async {
     takes.removeAt(0);
+    print(takes);
     notifyListeners();
-        
-    List<int> pagination = getPagination(currentPos, step);
-    final data = await databaseReference.client
-      .from('Takes')
-      .select()
-      .order("take_id", ascending: true)
-      .range(pagination[0],pagination[1]);
 
-    currentPos++;
-    
-    for(Map<String, dynamic> obj in data)
-    {
-      takes.add(Take.fromJson(obj));
-    }
-    gettingCards = false;
+    fetchTakes(step);
   }
 
   String getName(int index)
@@ -116,6 +112,15 @@ class TakesState extends ChangeNotifier {
       return takes[index].takeName;
     }
     return "Out of takes";
+  }
+
+  String getUserName(int index)
+  {
+    if(index < takes.length && takes[index].userName != null)
+    {
+       return takes[index].userName!;
+    }
+    return "John Doe";
   }
 
   int getAgrees(int index)
@@ -137,17 +142,26 @@ class TakesState extends ChangeNotifier {
     return 0;
   }
 
-  Future<List<Take>> getTop5() async
+  Future<int> getUserNumTakes(String user_id) async
+  {
+    int numTakes = 0;
+    final data = await databaseReference.client.rpc("getnumtakesforuser", params: { 'user_id': myUserId });
+    if(data != null)
+    {
+      numTakes = data as int;
+    }
+    return numTakes;
+  }
+
+  Future<List<Take>> getTopN(int n) async
   {
     List<Take> t = [];
-    final data = await databaseReference.client
-    .from('Takes')
-    .select()
-    .order('agrees')
-    .limit(5);
+    final data = await databaseReference.client.rpc("get_top_n_takes", params: { 'top_n': n });
+
 
     for(Map<String, dynamic> obj in data)
     {
+      print(obj);
       t.add(Take.fromJson(obj));
     }
     print("Random sampling: ${t.first.takeName}");

@@ -23,6 +23,9 @@ class _SplashPageState extends State<SplashPage> {
 
     final session = Supabase.instance.client.auth.currentSession;
     if (session != null) {
+      User _user = Supabase.instance.client.auth.currentUser!;
+      String profileName = _user.identities?.elementAt(0).identityData!["full_name"];
+      final status, statusText = await Supabase.instance.client.rpc('insert_user_if_not_exists', params: { 'client_user_id': _user.id, 'client_user_name': profileName });
       Navigator.of(context).pushReplacementNamed('Home');
     } else {
       Navigator.of(context).pushReplacementNamed('Login');

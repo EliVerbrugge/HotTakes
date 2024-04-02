@@ -24,11 +24,11 @@ class _LoginPageState extends State<LoginPage> {
         _isLoading = true;
       });
 
-      await Supabase.instance.client.auth.signInWithOAuth(OAuthProvider.google, redirectTo: kDebugMode ? 'https://localhost:3000': 'https://hottakes-1a324.web.app');
+      await Supabase.instance.client.auth.signInWithOAuth(OAuthProvider.google, redirectTo: kDebugMode ? 'http://localhost:3000/': 'https://hottakes-1a324.web.app');
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Logged in!')),
+          const SnackBar(content: Text('Logging in!')),
         );
         _emailController.clear();
       }
@@ -58,6 +58,9 @@ class _LoginPageState extends State<LoginPage> {
       final session = data.session;
       if (session != null) {
         _redirecting = true;
+        User _user = Supabase.instance.client.auth.currentUser!;
+        String profileName = _user.identities?.elementAt(0).identityData!["full_name"];
+        final data = Supabase.instance.client.rpc('insert_user_if_not_exists', params: { 'client_user_id': _user.id, 'client_user_name': profileName });
         Navigator.of(context).pushReplacementNamed('Home');
       }
     });

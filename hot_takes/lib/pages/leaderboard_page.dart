@@ -20,7 +20,7 @@ class _LeaderboardPage extends State<LeaderboardPage> {
   List<Take>? takes = null;
 
   Future<List<Take>> getTop(TakesState t) async {
-    return t.getTop5();
+    return t.getTopN(10);
   }
 
   @override
@@ -32,7 +32,7 @@ class _LeaderboardPage extends State<LeaderboardPage> {
     return Scaffold(
         key: UniqueKey(),
         appBar: AppBar(
-          leading: Icon(MdiIcons.fire),
+          leading: Tab(icon: new Image.asset("assets/img/take_icon.png"), text: "Browse"),
           title: Text("Hot Takes"),
           backgroundColor: Theme.of(context).primaryColor,
         ),
@@ -43,27 +43,35 @@ class _LeaderboardPage extends State<LeaderboardPage> {
               List<Widget> children;
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
-               takes = snapshot.data;
+                takes = snapshot.data;
                 children = <Widget>[
-                  Text("Top Takes", style: TextStyle(fontSize: 25),),
-                  Expanded( child:
-                  ListView.builder(
-                  itemCount: takes!.length,
-                  prototypeItem: Card(
-                      child: ListTile(
-                    title: Text(takes!.isNotEmpty ? takes!.first.takeName : ""),
-                    subtitle: Text(""),
-                  )),
-                  itemBuilder: (context, index) {
-                    return Card(
+                  SizedBox(height: 24),
+                  Text(
+                    "Top Takes",
+                    style: TextStyle(fontSize: 25),
+                  ),
+                  SizedBox(height: 24),
+                  Expanded(
+                      child: ListView.builder(
+                    itemCount: takes!.length,
+                    prototypeItem: Card(
                         child: ListTile(
                       title:
-                          Text(takes!.isNotEmpty ? takes![index].takeName : ""),
-                      subtitle: Text(
-                          "Agrees: ${takes!.isNotEmpty ? takes![index].agreeCount : ""}  Disagrees: ${takes!.isNotEmpty ? takes![index].disagreeCount : ""}"),
-                    ));
-                  },
-                ))
+                          Text(takes!.isNotEmpty ? takes!.first.takeName : ""),
+                      subtitle: Text(""),
+                    )),
+                    itemBuilder: (context, index) {
+                      return Card(
+                          child: ListTile(
+                        title: Text(
+                            takes!.isNotEmpty ? takes![index].takeName : ""),
+                        subtitle: Text(
+                            "Agrees: ${takes!.isNotEmpty ? takes![index].agreeCount : ""}  Disagrees: ${takes!.isNotEmpty ? takes![index].disagreeCount : ""}"),
+                        trailing: Text(
+                            "Author: ${takes!.isNotEmpty ? takes![index].userName : ""}"),
+                      ));
+                    },
+                  ))
                 ];
               } else if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasError) {

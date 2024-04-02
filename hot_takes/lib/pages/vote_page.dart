@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:hot_takes/pages/sign_in_page.dart';
 import 'package:hot_takes/components/takes_state.dart';
 import 'package:flutter/foundation.dart';
@@ -14,8 +15,25 @@ class VotePage extends StatelessWidget {
   User? _user = Supabase.instance.client.auth.currentUser!;
   String profileUrl = "";
   String profileName = "";
+  static bool firstTime = true;
 
   VotePage() {}
+
+  Widget getUserWidget(AsyncSnapshot<Object?> snapshot) {
+    String? username = "";
+    if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+      username = snapshot.data as String?;
+      return Text(
+        "Author: ${username}",
+        style: TextStyle(color: Colors.black, fontSize: 25),
+      );
+    } else {
+      return Text(
+        "Author: Unknown",
+        style: TextStyle(color: Colors.black, fontSize: 25),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +44,7 @@ class VotePage extends StatelessWidget {
     return Scaffold(
         key: UniqueKey(),
         appBar: AppBar(
-          leading: Icon(MdiIcons.fire),
+          leading: Image.asset("assets/img/take_icon.png"),
           title: Text("Hot Takes"),
           backgroundColor: Theme.of(context).primaryColor,
         ),
@@ -42,34 +60,122 @@ class VotePage extends StatelessWidget {
                     top: 50,
                     bottom: 40,
                   ),
-                  child: !takeState.outOfCards()
+                  child: !takeState.isOutOfCards()
                       ? AppinioSwiper(
                           cardBuilder: (BuildContext context, int index) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.white),
-                              alignment: Alignment.center,
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "${takeState.getName(index)}",
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 25),
-                                    ),
-                                    Text(
-                                      "Agrees: ${takeState.getAgrees(index)}",
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 25),
-                                    ),
-                                    Text(
-                                      "Disagrees: ${takeState.getDisagrees(index)}",
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 25),
-                                    )
-                                  ]),
-                            );
+                            return Column(children: [
+                              Expanded(
+                                  child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white),
+                                alignment: Alignment.center,
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                  topRight: Radius.circular(10),
+                                                  topLeft: Radius.circular(10),
+                                                ),
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topRight,
+                                                  end: Alignment.bottomLeft,
+                                                  colors: [
+                                                    Colors.blue,
+                                                    Colors.red,
+                                                  ],
+                                                )),
+                                            height: 50,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                    "${takeState.getName(index)}",
+                                                    style: const TextStyle(
+                                                      fontSize: 20,
+                                                    )),
+                                              ],
+                                            )),
+                                        flex: 6,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          "Author: ${takeState.getUserName(index)}",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: GetPlatform.isMobile
+                                                  ? 15
+                                                  : 25),
+                                        ),
+                                        flex: 1,
+                                      ),
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "Agrees",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: GetPlatform.isMobile
+                                                      ? 15
+                                                      : 25),
+                                            ),
+                                            Icon(
+                                              Icons.arrow_circle_up,
+                                              color: Colors.green,
+                                            ),
+                                            Text(
+                                              ": ${takeState.getAgrees(index)}",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: GetPlatform.isMobile
+                                                      ? 15
+                                                      : 25),
+                                            ),
+                                          ],
+                                        ),
+                                        flex: 1,
+                                      ),
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "Disagrees: ",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: GetPlatform.isMobile
+                                                      ? 15
+                                                      : 25),
+                                            ),
+                                            Icon(
+                                              Icons.arrow_circle_down,
+                                              color: Colors.red,
+                                            ),
+                                            Text(
+                                              ": ${takeState.getDisagrees(index)}",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: GetPlatform.isMobile
+                                                      ? 15
+                                                      : 25),
+                                            ),
+                                          ],
+                                        ),
+                                        flex: 1,
+                                      ),
+                                    ]),
+                              ))
+                            ]);
+                          },
+                          onEnd: () {
+                            firstTime = false;
                           },
                           onSwipeEnd: (previousIndex, targetIndex, activity) {
                             if (activity is Swipe) {
@@ -82,15 +188,27 @@ class VotePage extends StatelessWidget {
                                   AxisDirection.left) {
                                 takeState.disagree(previousIndex);
                               }
-                              takeState.loadAhead();
+                              takeState.voted();
                             }
                           },
                           cardCount: takeState.takes.length,
+                          swipeOptions:
+                              SwipeOptions.only(left: true, right: true),
                         )
                       : Card(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [Text("Out of Takes", style: TextStyle(fontSize: 25),), Icon(Icons.close_rounded, color: Colors.red, size: 40,)],
+                            children: [
+                              Text(
+                                "Out of Takes",
+                                style: TextStyle(fontSize: 25),
+                              ),
+                              Icon(
+                                Icons.close_rounded,
+                                color: Colors.red,
+                                size: 40,
+                              )
+                            ],
                           ),
                         ),
                 ),
@@ -128,8 +246,21 @@ class VotePage extends StatelessWidget {
                         TextButton(
                           child: const Text('Submit'),
                           onPressed: () {
+                            if (myController.text.isNotEmpty) {
+                              Navigator.of(context).pop();
+                              takeState.createTake(myController.text);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Needs to have text')),
+                              );
+                            }
+                          },
+                        ),
+                        TextButton(
+                          child: const Text('Cancel'),
+                          onPressed: () {
                             Navigator.of(context).pop();
-                            takeState.createTake(myController.text);
                           },
                         ),
                       ],
