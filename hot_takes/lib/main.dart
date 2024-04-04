@@ -42,7 +42,7 @@ class _HotTakes extends State<HotTakes> {
     return MaterialApp(
       title: 'Hot Takes',
       theme: ThemeData.dark().copyWith(
-        primaryColor: Colors.purple,
+        primaryColor: Color.fromARGB(255, 151, 69, 165),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
             foregroundColor: Colors.green,
