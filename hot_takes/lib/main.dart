@@ -108,7 +108,8 @@ class _HotTakes extends State<HotTakes> {
 
   Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case "Home":
+      case "Home": 
+      case "/home":
         setState(() {
           showBar = true;
         });

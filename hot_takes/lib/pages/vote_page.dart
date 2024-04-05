@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:hot_takes/pages/sign_in_page.dart';
@@ -92,17 +90,13 @@ class VotePage extends StatelessWidget {
                                                   ],
                                                 )),
                                             height: 50,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                    "${takeState.getName(index)}",
-                                                    style: const TextStyle(
-                                                      fontSize: 20,
-                                                    )),
-                                              ],
-                                            )),
+                                            child: Row(children: [Flexible(
+                                              child: Text(
+                                                  "${takeState.getName(index)}",
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                  )),
+                                            ),], mainAxisAlignment: MainAxisAlignment.center,)),
                                         flex: 6,
                                       ),
                                       Expanded(

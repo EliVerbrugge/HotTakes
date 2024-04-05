@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:hot_takes/pages/sign_in_page.dart';
 import 'package:hot_takes/components/takes_state.dart';
