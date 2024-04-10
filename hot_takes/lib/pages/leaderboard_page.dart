@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hot_takes/pages/sign_in_page.dart';
 import 'package:hot_takes/components/takes_state.dart';
 import 'package:flutter/foundation.dart';
@@ -19,6 +20,15 @@ class _LeaderboardPage extends State<LeaderboardPage> {
 
   Future<List<Take>> getTop(TakesState t) async {
     return t.getTopN(10);
+  }
+
+  double GetAgreePct(Take t)
+  {
+    int numerator = t.agreeCount;
+    int denominator = t.agreeCount+t.disagreeCount;
+    double result = (numerator/denominator)*100;
+
+    return double.parse((result).toStringAsFixed(2));
   }
 
   @override
@@ -61,6 +71,7 @@ class _LeaderboardPage extends State<LeaderboardPage> {
                     itemBuilder: (context, index) {
                       return Card(
                           child: ListTile(
+                        leading: Text("${takes!.isNotEmpty ? GetAgreePct(takes![index]) : 0}%"),
                         title: Text(
                             takes!.isNotEmpty ? takes![index].takeName : ""),
                         subtitle: Text(
