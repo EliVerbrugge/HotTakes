@@ -240,7 +240,7 @@ class VotePage extends StatelessWidget {
                         TextButton(
                           child: const Text('Submit'),
                           onPressed: () {
-                            if (myController.text.isNotEmpty) {
+                            if (myController.text.trim().isNotEmpty) {
                               Navigator.of(context).pop();
                               takeState.createTake(myController.text);
                             } else {
