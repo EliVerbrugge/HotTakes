@@ -183,7 +183,7 @@ class TakesState extends ChangeNotifier {
 
     if(data.isEmpty)
     {
-      await databaseReference.client.from("UserVotes").insert({'created_at': DateTime.now().toIso8601String(), 'user_id': myUserId, 'take_id': t.take_id,'is_agreement': true});
+      await databaseReference.client.from("UserVotes").insert({'user_id': myUserId, 'take_id': t.take_id, 'user_opinion' : 'Agree'});
       await databaseReference.client.rpc("incrementvote", params: { 'row_id': '${t.take_id}' });
     }
 
@@ -205,8 +205,29 @@ class TakesState extends ChangeNotifier {
 
     if(data.isEmpty)
     {
-      await databaseReference.client.from("UserVotes").insert({'created_at': DateTime.now().toIso8601String(), 'user_id': myUserId, 'take_id': t.take_id,'is_agreement': false});
+      await databaseReference.client.from("UserVotes").insert({'user_id': myUserId, 'take_id': t.take_id, 'user_opinion' : 'Disagree' });
       await databaseReference.client.rpc("decrementvote", params: { 'row_id': '${t.take_id}' });
+    }
+
+  }
+
+  void skip(int index) async {
+
+    if(index >= takes.length)
+    {
+      return;
+    }
+
+    Take t = takes[index];
+    final data = await databaseReference.client
+    .from('UserVotes')
+    .select()
+    .filter('user_id', 'eq', myUserId)
+    .filter('take_id', 'eq', t.take_id);
+
+    if(data.isEmpty)
+    {
+      await databaseReference.client.from("UserVotes").insert({'user_id': myUserId, 'take_id': t.take_id, 'user_opinion' : 'Neutral' });
     }
 
   }

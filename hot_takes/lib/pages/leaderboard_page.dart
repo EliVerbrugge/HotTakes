@@ -26,7 +26,7 @@ class _LeaderboardPage extends State<LeaderboardPage> {
   {
     int numerator = t.agreeCount;
     int denominator = t.agreeCount+t.disagreeCount;
-    double result = (numerator/denominator)*100;
+    double result = ((numerator/denominator)*100);
 
     return double.parse((result).toStringAsFixed(2));
   }

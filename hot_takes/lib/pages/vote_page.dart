@@ -14,6 +14,7 @@ class VotePage extends StatelessWidget {
   String profileUrl = "";
   String profileName = "";
   static bool firstTime = true;
+  final AppinioSwiperController controller = AppinioSwiperController();
 
   VotePage() {}
 
@@ -33,6 +34,56 @@ class VotePage extends StatelessWidget {
     }
   }
 
+  //swipe card to the left side
+Widget swipeLeftButton(AppinioSwiperController controller) {
+  return ListenableBuilder(
+    listenable: controller,
+    builder: (context, child) {
+      final SwiperPosition? position = controller.position;
+      final SwiperActivity? activity = controller.swipeActivity;
+      final double horizontalProgress =
+          (activity is Swipe || activity == null) &&
+                  position != null &&
+                  position.offset.toAxisDirection().isHorizontal
+              ? -1 * position.progressRelativeToThreshold.clamp(-1, 1)
+              : 0;
+      final Color color = Color.lerp(
+        const Color(0xFFFF3868),
+        Colors.grey,
+        (-1 * horizontalProgress).clamp(0, 1),
+      )!;
+      return GestureDetector(
+        onTap: () => controller.swipeLeft(),
+        child: Transform.scale(
+          // Increase the button size as we swipe towards it.
+          scale: 1 + .1 * horizontalProgress.clamp(0, 1),
+          child: Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(0.9),
+                  spreadRadius: -10,
+                  blurRadius: 20,
+                  offset: const Offset(0, 20), // changes position of shadow
+                ),
+              ],
+            ),
+            alignment: Alignment.center,
+            child: const Icon(
+              Icons.close,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     //
@@ -51,8 +102,8 @@ class VotePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: MediaQuery.of(context).size.height * .75,
-                width: MediaQuery.of(context).size.width * .7,
+                height: MediaQuery.of(context).size.height * (GetPlatform.isMobile ? 0.65 : 0.75),
+                width: MediaQuery.of(context).size.width * (GetPlatform.isMobile ? 0.7 : 0.4),
                 child: Padding(
                   padding: const EdgeInsets.only(
                     top: 50,
@@ -188,6 +239,7 @@ class VotePage extends StatelessWidget {
                           cardCount: takeState.takes.length,
                           swipeOptions:
                               SwipeOptions.only(left: true, right: true),
+                          controller: controller,
                         )
                       : Card(
                           child: Column(
@@ -197,18 +249,15 @@ class VotePage extends StatelessWidget {
                                 "Out of Takes",
                                 style: TextStyle(fontSize: 25),
                               ),
-                              Icon(
-                                Icons.close_rounded,
-                                color: Colors.red,
-                                size: 40,
-                              )
+                              Image.asset("assets/img/crying.png", width: 100, height: 100,),
                             ],
                           ),
                         ),
                 ),
               ),
             ],
-          )
+          ),
+          !takeState.isOutOfCards() ? ElevatedButton(onPressed: () {takeState.skip(controller.cardIndex!); controller.swipeDown();} , child: Text('Skip')) : SizedBox(),
         ]),
         floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -232,7 +281,7 @@ class VotePage extends StatelessWidget {
                           children: <Widget>[
                             TextField(
                               controller: myController,
-                            )
+                            ),
                           ],
                         ),
                       ),
