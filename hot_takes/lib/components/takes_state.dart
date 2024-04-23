@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -161,10 +159,22 @@ class TakesState extends ChangeNotifier {
 
     for(Map<String, dynamic> obj in data)
     {
-      print(obj);
       t.add(Take.fromJson(obj));
     }
-    print("Random sampling: ${t.first.takeName}");
+    return t;
+  }
+
+  Future<List<Take>> getUsersTakes(String user_id) async
+  {
+    List<Take> t = [];
+
+    final data = await databaseReference.client.rpc("get_user_takes", params: { 'client_user_id': user_id });
+
+
+    for(Map<String, dynamic> obj in data)
+    {
+      t.add(Take.fromJson(obj));
+    }
     return t;
   }
 

@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:hot_takes/components/takes_list.dart';
 import 'package:hot_takes/components/takes_state.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class LeaderboardPage extends StatefulWidget {
+class MyTakesPage extends StatefulWidget {
   @override
-  State<LeaderboardPage> createState() => _LeaderboardPage();
+  State<MyTakesPage> createState() => _MyTakesPage();
 }
 
-class _LeaderboardPage extends State<LeaderboardPage> {
+class _MyTakesPage extends State<MyTakesPage> {
   List<Take>? takes = null;
+  final myUserId = Supabase.instance.client.auth.currentUser!.id;
 
-  Future<List<Take>> getTop(TakesState t) async {
-    return t.getTopN(10);
+  Future<List<Take>> getTakes(TakesState t) async {
+    return t.getUsersTakes(myUserId);
   }
 
   @override
@@ -37,11 +39,11 @@ class _LeaderboardPage extends State<LeaderboardPage> {
           children: [
             SizedBox(height: 24),
             Text(
-              "Top Takes",
+              "My Takes",
               style: TextStyle(fontSize: 25),
             ),
             SizedBox(height: 24),
-            TakesList(dataFunc: getTop(takeState))
+            TakesList(dataFunc: getTakes(takeState))
           ],
         )));
   }

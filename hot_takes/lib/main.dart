@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hot_takes/pages/splash_page.dart';
+import 'package:hot_takes/pages/usertakes_page.dart';
 import 'package:hot_takes/pages/vote_page.dart';
 import 'package:hot_takes/pages/leaderboard_page.dart';
 import 'package:hot_takes/pages/sign_in_page.dart';
@@ -69,7 +70,7 @@ class _HotTakes extends State<HotTakes> {
                     icon: Icon(Icons.person_outlined),
                     label: 'Profile',
                   ),
-                   NavigationDestination(
+                  NavigationDestination(
                     selectedIcon: Icon(Icons.home),
                     icon: Icon(Icons.home_outlined),
                     label: 'Home',
@@ -108,7 +109,7 @@ class _HotTakes extends State<HotTakes> {
 
   Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case "Home": 
+      case "Home":
       case "/home":
         setState(() {
           showBar = true;
@@ -131,6 +132,11 @@ class _HotTakes extends State<HotTakes> {
           showBar = true;
         });
         return MaterialPageRoute(builder: (context) => ProfilePage());
+      case "My Takes":
+        setState(() {
+          showBar = true;
+        });
+        return MaterialPageRoute(builder: (context) => MyTakesPage());
       default:
         setState(() {
           showBar = true;
