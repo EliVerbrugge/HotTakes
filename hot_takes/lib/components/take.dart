@@ -1,3 +1,13 @@
+enum Opinion {
+  Agree(name: "Agree"),
+  Disagree(name: "Disagree"),
+  Neutral(name: "Neutral");
+
+  const Opinion({required this.name});
+
+  final String name;
+}
+
 class Take {
   int take_id = 0;
   int agreeCount = 0;

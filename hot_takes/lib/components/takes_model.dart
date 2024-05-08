@@ -4,16 +4,6 @@ import 'package:hot_takes/components/take.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:synchronized/synchronized.dart';
 
-enum Opinion {
-  Agree(name: "Agree"),
-  Disagree(name: "Disagree"),
-  Neutral(name: "Neutral");
-
-  const Opinion({required this.name});
-
-  final String name;
-}
-
 class TakeModel extends ChangeNotifier {
   // Reference to the database we will be querying for takes
   final databaseReference = Supabase.instance;

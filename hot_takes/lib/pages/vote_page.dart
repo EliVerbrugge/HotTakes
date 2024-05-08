@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
 
 import '../components/take_utils.dart';
+import '../components/take.dart';
 
 class VotePage extends StatelessWidget {
   final myUserId = Supabase.instance.client.auth.currentUser!.id;
