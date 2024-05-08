@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hot_takes/components/takes_state.dart';
-import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../components/take_utils.dart';
 
 class ProfilePage extends StatelessWidget {
   final myUserId = Supabase.instance.client.auth.currentUser!.id;
@@ -29,7 +29,6 @@ class ProfilePage extends StatelessWidget {
     //
     // This method is rerun every time notifyListeners is called from the Provider.
     //
-    final takeState = Provider.of<TakesState>(context);
     return Scaffold(
       key: UniqueKey(),
       appBar: AppBar(
@@ -62,7 +61,7 @@ class ProfilePage extends StatelessWidget {
                 onPressed: () => signOut(context), child: Text("Sign out")),
             SizedBox(height: 24),
             FutureBuilder(
-              future: takeState.getUserNumTakes(myUserId),
+              future: getUserNumTakes(myUserId),
               builder: (context, snapshot) {
                 List<Widget> children;
                 int? numTakes = 0;
