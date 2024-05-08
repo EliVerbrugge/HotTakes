@@ -42,12 +42,7 @@ class _HotTakes extends State<HotTakes> {
     return MaterialApp(
       title: 'Hot Takes',
       theme: ThemeData.dark().copyWith(
-        primaryColor: Color.fromARGB(255, 151, 69, 165),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.green,
-          ),
-        ),
+        primaryColor: Color.fromRGBO(100, 35, 102, 1),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
@@ -65,40 +60,77 @@ class _HotTakes extends State<HotTakes> {
             ? NavigationBar(
                 destinations: [
                   NavigationDestination(
-                    selectedIcon: Icon(Icons.person),
-                    icon: Icon(Icons.person_outlined),
-                    label: 'Profile',
-                  ),
-                   NavigationDestination(
-                    selectedIcon: Icon(Icons.home),
-                    icon: Icon(Icons.home_outlined),
+                    selectedIcon: Icon(
+                      Icons.home,
+                      color: Colors.white,
+                    ),
+                    icon: Icon(Icons.home_outlined,
+                        color: Color.fromRGBO(69, 69, 69, 1)),
                     label: 'Home',
                   ),
                   NavigationDestination(
-                    selectedIcon: Icon(MdiIcons.podium),
-                    icon: Icon(MdiIcons.podium),
-                    label: 'Leaderboard',
+                    selectedIcon: Icon(
+                      Icons.explore,
+                      color: Colors.white,
+                    ),
+                    icon: Icon(Icons.explore_outlined,
+                        color: Color.fromRGBO(69, 69, 69, 1)),
+                    label: 'Explore',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: Icon(
+                      Icons.add_circle,
+                      color: Colors.white,
+                    ),
+                    icon: Icon(
+                      Icons.add_circle_outline_outlined,
+                      color: Color.fromRGBO(69, 69, 69, 1),
+                    ),
+                    label: 'Create Take',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: Icon(
+                      MdiIcons.podium,
+                      color: Colors.white,
+                    ),
+                    icon: Icon(MdiIcons.podium,
+                        color: Color.fromRGBO(69, 69, 69, 1)),
+                    label: 'Top Takes',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    ),
+                    icon: Icon(Icons.person_outlined,
+                        color: Color.fromRGBO(69, 69, 69, 1)),
+                    label: 'Profile',
                   ),
                 ],
                 onDestinationSelected: (int index) {
                   switch (index) {
                     case 0:
-                      _navigatorKey.currentState
-                          ?.pushReplacementNamed("Profile");
+                      _navigatorKey.currentState?.pushReplacementNamed("Home");
                       break;
                     case 1:
-                      _navigatorKey.currentState?.pushReplacementNamed("Home");
+                      _navigatorKey.currentState
+                          ?.pushReplacementNamed("Leaderboard");
                       break;
                     case 2:
                       _navigatorKey.currentState
                           ?.pushReplacementNamed("Leaderboard");
+                      break;
+                    case 3:
+                      _navigatorKey.currentState
+                          ?.pushReplacementNamed("Profile");
                       break;
                   }
                   setState(() {
                     _currentTabIndex = index;
                   });
                 },
-                indicatorColor: Colors.black,
+                backgroundColor: Colors.black,
+                indicatorColor: Color.fromRGBO(0, 0, 0, 0),
                 selectedIndex: _currentTabIndex,
               )
             : null,
@@ -108,7 +140,7 @@ class _HotTakes extends State<HotTakes> {
 
   Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case "Home": 
+      case "Home":
       case "/home":
         setState(() {
           showBar = true;
