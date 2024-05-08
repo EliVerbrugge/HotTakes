@@ -193,11 +193,10 @@ class VotePage extends StatelessWidget {
             print("prev take: ${takes.getName(previousIndex)}");
             print("direction: ${activity.direction}");
             if (activity.direction == AxisDirection.right) {
-              takes.agree(previousIndex);
+              takes.vote(previousIndex, Opinion.Agree);
             } else if (activity.direction == AxisDirection.left) {
-              takes.disagree(previousIndex);
+              takes.vote(previousIndex, Opinion.Disagree);
             }
-            takes.voted();
           }
         },
         cardCount: takes.takes.length,
@@ -258,7 +257,7 @@ class VotePage extends StatelessWidget {
           !takeModel.isOutOfCards()
               ? ElevatedButton(
                   onPressed: () {
-                    takeModel.skip(controller.cardIndex!);
+                    takeModel.vote(controller.cardIndex!, Opinion.Neutral);
                     controller.swipeDown();
                   },
                   child: Text('Skip'))

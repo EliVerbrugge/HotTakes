@@ -4,6 +4,16 @@ import 'package:hot_takes/components/take.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:synchronized/synchronized.dart';
 
+enum Opinion {
+  Agree(name: "Agree"),
+  Disagree(name: "Disagree"),
+  Neutral(name: "Neutral");
+
+  const Opinion({required this.name});
+
+  final String name;
+}
+
 class TakeModel extends ChangeNotifier {
   // Reference to the database we will be querying for takes
   final databaseReference = Supabase.instance;
@@ -24,13 +34,14 @@ class TakeModel extends ChangeNotifier {
   }
 
   bool isOutOfCards() {
+    // If empty, let's try and fetch some more (never a reason to show empty)
     if (takes.isEmpty) {
       fetchTakes(5);
     }
     return takes.isEmpty;
   }
 
-  void fetchTakes(int n) async {
+  void fetchTakes(int step) async {
     // Aquire lock first, so we don't continously fetch takes on widget rebuilds and such
     await _lock.synchronized(() async {
       // Get takes in the db which the user hasn't voted on
@@ -38,31 +49,23 @@ class TakeModel extends ChangeNotifier {
       final data = await databaseReference.client.rpc('get_takes_without_votes',
           params: {
             'client_user_id': myUserId
-          }).range(currentPos, currentPos + (n - 1));
+          }).range(currentPos, currentPos + (step - 1));
 
-      // If there weren't quite n items left, set it equal to num elements retrieved
+      // If there weren't quite 'step' items left, set it equal to num elements retrieved
       // so we can update current position in results list correctly
-      if (data.length < n) {
-        n = data.length;
+      if (data.length < step) {
+        step = data.length;
       }
 
       // If there are elements update our position and add them to the array
-      if (n > 0) {
-        currentPos += n;
+      if (step > 0) {
+        currentPos += step;
         for (Map<String, dynamic> obj in data) {
           takes.add(Take.fromJson(obj));
         }
         notifyListeners();
       }
     });
-  }
-
-  void voted() async {
-    takes.removeAt(0);
-    print(takes);
-    notifyListeners();
-
-    fetchTakes(step);
   }
 
   String getName(int index) {
@@ -93,10 +96,12 @@ class TakeModel extends ChangeNotifier {
     return 0;
   }
 
-  void agree(int index) async {
+  void vote(int index, Opinion op) async {
     if (index >= takes.length) {
       return;
     }
+
+    // First check if the user has already voted
     Take t = takes[index];
     final data = await databaseReference.client
         .from('UserVotes')
@@ -106,53 +111,26 @@ class TakeModel extends ChangeNotifier {
 
     if (data.isEmpty) {
       await databaseReference.client.from("UserVotes").insert(
-          {'user_id': myUserId, 'take_id': t.take_id, 'user_opinion': 'Agree'});
-      await databaseReference.client
-          .rpc("incrementvote", params: {'row_id': '${t.take_id}'});
+          {'user_id': myUserId, 'take_id': t.take_id, 'user_opinion': op.name});
+
+      switch (op) {
+        case Opinion.Disagree:
+          await databaseReference.client
+              .rpc("decrementvote", params: {'row_id': '${t.take_id}'});
+          break;
+        case Opinion.Agree:
+          await databaseReference.client
+              .rpc("incrementvote", params: {'row_id': '${t.take_id}'});
+          break;
+        case Opinion.Neutral:
+          break;
+      }
     }
-  }
+    // After voting remove the current take
+    takes.removeAt(0);
+    notifyListeners();
 
-  void disagree(int index) async {
-    if (index >= takes.length) {
-      return;
-    }
-
-    Take t = takes[index];
-    final data = await databaseReference.client
-        .from('UserVotes')
-        .select()
-        .filter('user_id', 'eq', myUserId)
-        .filter('take_id', 'eq', t.take_id);
-
-    if (data.isEmpty) {
-      await databaseReference.client.from("UserVotes").insert({
-        'user_id': myUserId,
-        'take_id': t.take_id,
-        'user_opinion': 'Disagree'
-      });
-      await databaseReference.client
-          .rpc("decrementvote", params: {'row_id': '${t.take_id}'});
-    }
-  }
-
-  void skip(int index) async {
-    if (index >= takes.length) {
-      return;
-    }
-
-    Take t = takes[index];
-    final data = await databaseReference.client
-        .from('UserVotes')
-        .select()
-        .filter('user_id', 'eq', myUserId)
-        .filter('take_id', 'eq', t.take_id);
-
-    if (data.isEmpty) {
-      await databaseReference.client.from("UserVotes").insert({
-        'user_id': myUserId,
-        'take_id': t.take_id,
-        'user_opinion': 'Neutral'
-      });
-    }
+    // Get some more takes
+    fetchTakes(step);
   }
 }
