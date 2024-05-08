@@ -9,7 +9,7 @@ class TakeModel extends ChangeNotifier {
   final databaseReference = Supabase.instance;
   final myUserId = Supabase.instance.client.auth.currentUser!.id;
 
-  final int step = 5;
+  final int defaultStep = 5;
   static int currentPos = 0;
 
   // A list of current takes in the DB
@@ -20,13 +20,13 @@ class TakeModel extends ChangeNotifier {
 
   TakesState() {
     // Initialize and grab some takes
-    fetchTakes(5);
+    fetchTakes(defaultStep);
   }
 
   bool isOutOfCards() {
     // If empty, let's try and fetch some more (never a reason to show empty)
     if (takes.isEmpty) {
-      fetchTakes(5);
+      fetchTakes(defaultStep);
     }
     return takes.isEmpty;
   }
@@ -121,6 +121,6 @@ class TakeModel extends ChangeNotifier {
     notifyListeners();
 
     // Get some more takes
-    fetchTakes(step);
+    fetchTakes(defaultStep);
   }
 }
