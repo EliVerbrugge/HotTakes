@@ -9,7 +9,6 @@ void createTake(String name) async {
   final myUserId = Supabase.instance.client.auth.currentUser!.id;
 
   await databaseReference.client.from("Takes").insert({
-    'created_at': DateTime.now().toIso8601String(),
     'take': name,
     'agrees': 0,
     'disagrees': 0,
