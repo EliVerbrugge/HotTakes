@@ -5,7 +5,7 @@ import 'package:hot_takes/pages/vote_page.dart';
 import 'package:hot_takes/pages/leaderboard_page.dart';
 import 'package:hot_takes/pages/sign_in_page.dart';
 import 'package:hot_takes/pages/profile_page.dart';
-import 'package:hot_takes/components/takes_state.dart';
+import 'package:hot_takes/components/takes_model.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hot_takes/auth/secrets.dart';
@@ -19,8 +19,8 @@ void main() async {
     anonKey: '$supabaseSecretKey',
   );
 
-  runApp(ChangeNotifierProvider<TakesState>(
-    create: (context) => TakesState(),
+  runApp(ChangeNotifierProvider<TakeModel>(
+    create: (context) => TakeModel(),
     child: HotTakes(),
   ));
 }
@@ -42,20 +42,7 @@ class _HotTakes extends State<HotTakes> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Hot Takes',
-      theme: ThemeData.dark().copyWith(
-        primaryColor: Color.fromARGB(255, 151, 69, 165),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.green,
-          ),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.green,
-          ),
-        ),
-      ),
+      theme: ThemeData.from(colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 194, 26, 160), brightness: Brightness.dark)),
       home: Scaffold(
         body: Navigator(
           key: _navigatorKey,
@@ -110,7 +97,6 @@ class _HotTakes extends State<HotTakes> {
   Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case "Home":
-      case "/home":
         setState(() {
           showBar = true;
         });

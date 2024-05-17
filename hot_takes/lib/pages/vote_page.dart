@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/platform/platform.dart';
-import 'package:hot_takes/pages/sign_in_page.dart';
-import 'package:hot_takes/components/takes_state.dart';
-import 'package:flutter/foundation.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:hot_takes/components/takes_model.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
 
+import '../components/take_utils.dart';
+import '../components/take.dart';
+
 class VotePage extends StatelessWidget {
   final myUserId = Supabase.instance.client.auth.currentUser!.id;
-  User? _user = Supabase.instance.client.auth.currentUser!;
   String profileUrl = "";
   String profileName = "";
   static bool firstTime = true;
@@ -35,212 +34,207 @@ class VotePage extends StatelessWidget {
   }
 
   //swipe card to the left side
-Widget swipeLeftButton(AppinioSwiperController controller) {
-  return ListenableBuilder(
-    listenable: controller,
-    builder: (context, child) {
-      final SwiperPosition? position = controller.position;
-      final SwiperActivity? activity = controller.swipeActivity;
-      final double horizontalProgress =
-          (activity is Swipe || activity == null) &&
-                  position != null &&
-                  position.offset.toAxisDirection().isHorizontal
-              ? -1 * position.progressRelativeToThreshold.clamp(-1, 1)
-              : 0;
-      final Color color = Color.lerp(
-        const Color(0xFFFF3868),
-        Colors.grey,
-        (-1 * horizontalProgress).clamp(0, 1),
-      )!;
-      return GestureDetector(
-        onTap: () => controller.swipeLeft(),
-        child: Transform.scale(
-          // Increase the button size as we swipe towards it.
-          scale: 1 + .1 * horizontalProgress.clamp(0, 1),
-          child: Container(
-            height: 60,
-            width: 60,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: color.withOpacity(0.9),
-                  spreadRadius: -10,
-                  blurRadius: 20,
-                  offset: const Offset(0, 20), // changes position of shadow
-                ),
-              ],
-            ),
-            alignment: Alignment.center,
-            child: const Icon(
-              Icons.close,
-              color: Colors.white,
+  Widget swipeLeftButton(AppinioSwiperController controller) {
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, child) {
+        final SwiperPosition? position = controller.position;
+        final SwiperActivity? activity = controller.swipeActivity;
+        final double horizontalProgress =
+            (activity is Swipe || activity == null) &&
+                    position != null &&
+                    position.offset.toAxisDirection().isHorizontal
+                ? -1 * position.progressRelativeToThreshold.clamp(-1, 1)
+                : 0;
+        final Color color = Color.lerp(
+          const Color(0xFFFF3868),
+          Colors.grey,
+          (-1 * horizontalProgress).clamp(0, 1),
+        )!;
+        return GestureDetector(
+          onTap: () => controller.swipeLeft(),
+          child: Transform.scale(
+            // Increase the button size as we swipe towards it.
+            scale: 1 + .1 * horizontalProgress.clamp(0, 1),
+            child: Container(
+              height: 60,
+              width: 60,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.9),
+                    spreadRadius: -10,
+                    blurRadius: 20,
+                    offset: const Offset(0, 20), // changes position of shadow
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: const Icon(
+                Icons.close,
+                color: Colors.white,
+              ),
             ),
           ),
-        ),
+        );
+      },
+    );
+  }
+
+  // Todo: Figure out if this can be given a take instead of the whole model
+  Widget voteCard() {
+    return Consumer<TakeModel>(builder: (context, takes, child) {
+      return AppinioSwiper(
+        cardBuilder: (BuildContext context, int index) {
+          return Column(children: [
+            Expanded(
+                child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10), color: Colors.white),
+              alignment: Alignment.center,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                topLeft: Radius.circular(10),
+                              ),
+                              gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                                colors: [
+                                  Colors.blue,
+                                  Colors.red,
+                                ],
+                              )),
+                          height: 50,
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: Text("${takes.getName(index)}",
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                    )),
+                              ),
+                            ],
+                            mainAxisAlignment: MainAxisAlignment.center,
+                          )),
+                      flex: 6,
+                    ),
+                    Expanded(
+                      child: Text(
+                        "Author: ${takes.getUserName(index)}",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: GetPlatform.isMobile ? 15 : 25),
+                      ),
+                      flex: 1,
+                    ),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Text(
+                            "Agrees",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: GetPlatform.isMobile ? 15 : 25),
+                          ),
+                          Icon(
+                            Icons.arrow_circle_up,
+                            color: Colors.green,
+                          ),
+                          Text(
+                            ": ${takes.getAgrees(index)}",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: GetPlatform.isMobile ? 15 : 25),
+                          ),
+                        ],
+                      ),
+                      flex: 1,
+                    ),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Text(
+                            "Disagrees: ",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: GetPlatform.isMobile ? 15 : 25),
+                          ),
+                          Icon(
+                            Icons.arrow_circle_down,
+                            color: Colors.red,
+                          ),
+                          Text(
+                            ": ${takes.getDisagrees(index)}",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: GetPlatform.isMobile ? 15 : 25),
+                          ),
+                        ],
+                      ),
+                      flex: 1,
+                    ),
+                  ]),
+            ))
+          ]);
+        },
+        onEnd: () {
+          firstTime = false;
+        },
+        onSwipeEnd: (previousIndex, targetIndex, activity) {
+          if (activity is Swipe) {
+            print("prev take: ${takes.getName(previousIndex)}");
+            print("direction: ${activity.direction}");
+            if (activity.direction == AxisDirection.right) {
+              takes.vote(previousIndex, Opinion.Agree);
+            } else if (activity.direction == AxisDirection.left) {
+              takes.vote(previousIndex, Opinion.Disagree);
+            }
+          }
+        },
+        cardCount: takes.takes.length,
+        swipeOptions: SwipeOptions.only(left: true, right: true),
+        controller: controller,
       );
-    },
-  );
-}
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     //
     // This method is rerun every time notifyListeners is called from the Provider.
     //
-    final takeState = Provider.of<TakesState>(context);
+    final takeModel = Provider.of<TakeModel>(context);
     return Scaffold(
         key: UniqueKey(),
         appBar: AppBar(
           leading: Image.asset("assets/img/take_icon.png"),
           title: Text("Hot Takes"),
-          backgroundColor: Theme.of(context).primaryColor,
         ),
         body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: MediaQuery.of(context).size.height * (GetPlatform.isMobile ? 0.65 : 0.75),
-                width: MediaQuery.of(context).size.width * (GetPlatform.isMobile ? 0.7 : 0.4),
+                height: MediaQuery.of(context).size.height *
+                    (GetPlatform.isMobile ? 0.65 : 0.75),
+                width: MediaQuery.of(context).size.width *
+                    (GetPlatform.isMobile ? 0.7 : 0.4),
                 child: Padding(
                   padding: const EdgeInsets.only(
                     top: 50,
                     bottom: 40,
                   ),
-                  child: !takeState.isOutOfCards()
-                      ? AppinioSwiper(
-                          cardBuilder: (BuildContext context, int index) {
-                            return Column(children: [
-                              Expanded(
-                                  child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white),
-                                alignment: Alignment.center,
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-                                                  topRight: Radius.circular(10),
-                                                  topLeft: Radius.circular(10),
-                                                ),
-                                                gradient: LinearGradient(
-                                                  begin: Alignment.topRight,
-                                                  end: Alignment.bottomLeft,
-                                                  colors: [
-                                                    Colors.blue,
-                                                    Colors.red,
-                                                  ],
-                                                )),
-                                            height: 50,
-                                            child: Row(children: [Flexible(
-                                              child: Text(
-                                                  "${takeState.getName(index)}",
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
-                                                  )),
-                                            ),], mainAxisAlignment: MainAxisAlignment.center,)),
-                                        flex: 6,
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          "Author: ${takeState.getUserName(index)}",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: GetPlatform.isMobile
-                                                  ? 15
-                                                  : 25),
-                                        ),
-                                        flex: 1,
-                                      ),
-                                      Expanded(
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              "Agrees",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: GetPlatform.isMobile
-                                                      ? 15
-                                                      : 25),
-                                            ),
-                                            Icon(
-                                              Icons.arrow_circle_up,
-                                              color: Colors.green,
-                                            ),
-                                            Text(
-                                              ": ${takeState.getAgrees(index)}",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: GetPlatform.isMobile
-                                                      ? 15
-                                                      : 25),
-                                            ),
-                                          ],
-                                        ),
-                                        flex: 1,
-                                      ),
-                                      Expanded(
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              "Disagrees: ",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: GetPlatform.isMobile
-                                                      ? 15
-                                                      : 25),
-                                            ),
-                                            Icon(
-                                              Icons.arrow_circle_down,
-                                              color: Colors.red,
-                                            ),
-                                            Text(
-                                              ": ${takeState.getDisagrees(index)}",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: GetPlatform.isMobile
-                                                      ? 15
-                                                      : 25),
-                                            ),
-                                          ],
-                                        ),
-                                        flex: 1,
-                                      ),
-                                    ]),
-                              ))
-                            ]);
-                          },
-                          onEnd: () {
-                            firstTime = false;
-                          },
-                          onSwipeEnd: (previousIndex, targetIndex, activity) {
-                            if (activity is Swipe) {
-                              print(
-                                  "prev take: ${takeState.getName(previousIndex)}");
-                              print("direction: ${activity.direction}");
-                              if (activity.direction == AxisDirection.right) {
-                                takeState.agree(previousIndex);
-                              } else if (activity.direction ==
-                                  AxisDirection.left) {
-                                takeState.disagree(previousIndex);
-                              }
-                              takeState.voted();
-                            }
-                          },
-                          cardCount: takeState.takes.length,
-                          swipeOptions:
-                              SwipeOptions.only(left: true, right: true),
-                          controller: controller,
-                        )
+                  child: !takeModel.isOutOfCards()
+                      ? voteCard()
                       : Card(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -249,7 +243,11 @@ Widget swipeLeftButton(AppinioSwiperController controller) {
                                 "Out of Takes",
                                 style: TextStyle(fontSize: 25),
                               ),
-                              Image.asset("assets/img/crying.png", width: 100, height: 100,),
+                              Image.asset(
+                                "assets/img/crying.png",
+                                width: 100,
+                                height: 100,
+                              ),
                             ],
                           ),
                         ),
@@ -257,7 +255,14 @@ Widget swipeLeftButton(AppinioSwiperController controller) {
               ),
             ],
           ),
-          !takeState.isOutOfCards() ? ElevatedButton(onPressed: () {takeState.skip(controller.cardIndex!); controller.swipeDown();} , child: Text('Skip')) : SizedBox(),
+          !takeModel.isOutOfCards()
+              ? ElevatedButton(
+                  onPressed: () {
+                    takeModel.vote(controller.cardIndex!, Opinion.Neutral);
+                    controller.swipeDown();
+                  },
+                  child: Text('Skip'))
+              : SizedBox(),
         ]),
         floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -266,7 +271,7 @@ Widget swipeLeftButton(AppinioSwiperController controller) {
               height: 8,
             ),
             FloatingActionButton(
-              backgroundColor: Theme.of(context).primaryColor,
+              backgroundColor: Theme.of(context).highlightColor,
               onPressed: () async {
                 final myController = TextEditingController();
 
@@ -291,7 +296,7 @@ Widget swipeLeftButton(AppinioSwiperController controller) {
                           onPressed: () {
                             if (myController.text.trim().isNotEmpty) {
                               Navigator.of(context).pop();
-                              takeState.createTake(myController.text);
+                              createTake(myController.text);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(

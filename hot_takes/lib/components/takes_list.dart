@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hot_takes/components/takes_state.dart';
-import 'package:provider/provider.dart';
+import 'package:hot_takes/components/take.dart';
 
 class TakesList extends StatefulWidget {
   final dataFunc;
@@ -13,6 +12,7 @@ class TakesList extends StatefulWidget {
 
 class _TakesList extends State<TakesList> {
   List<Take>? takes = null;
+
   late final Future<List<Take>> dataSource = widget.dataFunc;
 
   double GetAgreePct(Take t) {
@@ -39,6 +39,7 @@ class _TakesList extends State<TakesList> {
               child: ListView.builder(
             itemCount: takes!.length,
             shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             prototypeItem: Card(
                 child: ListTile(
               title: Text(takes!.isNotEmpty ? takes!.first.takeName : ""),

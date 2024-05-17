@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hot_takes/components/takes_list.dart';
-import 'package:hot_takes/components/takes_state.dart';
-import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../components/take.dart';
+import '../components/take_utils.dart';
 
 class MyTakesPage extends StatefulWidget {
   @override
@@ -13,16 +14,11 @@ class _MyTakesPage extends State<MyTakesPage> {
   List<Take>? takes = null;
   final myUserId = Supabase.instance.client.auth.currentUser!.id;
 
-  Future<List<Take>> getTakes(TakesState t) async {
-    return t.getUsersTakes(myUserId);
-  }
-
   @override
   Widget build(BuildContext context) {
     //
     // This method is rerun every time notifyListeners is called from the Provider.
     //
-    final takeState = Provider.of<TakesState>(context);
     return Scaffold(
         key: UniqueKey(),
         appBar: AppBar(
@@ -43,7 +39,7 @@ class _MyTakesPage extends State<MyTakesPage> {
               style: TextStyle(fontSize: 25),
             ),
             SizedBox(height: 24),
-            TakesList(dataFunc: getTakes(takeState))
+            TakesList(dataFunc: getUsersTakes(myUserId))
           ],
         )));
   }
