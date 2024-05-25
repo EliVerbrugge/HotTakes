@@ -14,34 +14,38 @@ class Take {
   int take_id = 0;
   int agreeCount = 0;
   int disagreeCount = 0;
-  int spicyness = Random().nextInt(5);
+  int spicyness = 0;
   bool isIcy = Random().nextBool();
   DateTime created = DateTime.fromMicrosecondsSinceEpoch(0);
   String takeName = "";
   String userId = "";
   String? userName = "";
 
-  Take(String name, int agrees, int disagrees, int spicyness, bool isIcy,
-      int id, DateTime date, String user_id, String? user_name) {
+  Take(String name, int agrees, int disagrees, bool isIcy, int id,
+      DateTime date, String user_id, String? user_name) {
     takeName = name;
     agreeCount = agrees;
     disagreeCount = disagrees;
-    spicyness = spicyness;
     isIcy = isIcy;
     take_id = id;
     userId = user_id;
     created = date;
     userName = user_name;
+
+    // Spicyness is the number of disagrees as ratio of total opinions, out of 5
+    spicyness = ((disagreeCount / (agreeCount + disagreeCount)) * 5).toInt();
   }
 
-  Take.fromJson(Map<String, dynamic> json)
-  {
-        takeName = json['take'] as String;
-        agreeCount = json['agrees'] as int;
-        disagreeCount = json['disagrees'] as int;
-        take_id = json['take_id'] as int;
-        userId = json['author_user_id'] as String;
-        created = DateTime.parse(json['created_at']);
-        userName = json['user_name'] as String?;
+  Take.fromJson(Map<String, dynamic> json) {
+    takeName = json['take'] as String;
+    agreeCount = json['agrees'] as int;
+    disagreeCount = json['disagrees'] as int;
+    take_id = json['take_id'] as int;
+    userId = json['author_user_id'] as String;
+    created = DateTime.parse(json['created_at']);
+    userName = json['user_name'] as String?;
+
+    // Spicyness is the number of disagrees as ratio of total opinions, out of 5
+    spicyness = ((disagreeCount / (agreeCount + disagreeCount)) * 5).toInt();
   }
 }
