@@ -9,22 +9,23 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:hot_takes/pages/sign_in_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:hot_takes/components/takes_model.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
 
-import 'package:hot_takes/components/takes_state.dart';
-import 'package:hot_takes/components/card_components/card_panel.dart';
-import 'package:hot_takes/components/card_components/card_content.dart';
+import '../components/card_components/card_panel.dart';
+import '../components/card_components/card_content.dart';
+import '../components/take_utils.dart';
+import '../components/take.dart';
 
 class VotePage extends StatelessWidget {
   final myUserId = Supabase.instance.client.auth.currentUser!.id;
-  User? _user = Supabase.instance.client.auth.currentUser!;
   String profileUrl = "";
   String profileName = "";
   static bool firstTime = true;
+  final AppinioSwiperController controller = AppinioSwiperController();
 
   VotePage() {}
 
@@ -33,8 +34,7 @@ class VotePage extends StatelessWidget {
     //
     // This method is rerun every time notifyListeners is called from the Provider.
     //
-
-    final takeState = Provider.of<TakesState>(context);
+    final takeModel = Provider.of<TakeModel>(context);
     return Scaffold(
         key: UniqueKey(),
         appBar: AppBar(
@@ -47,7 +47,7 @@ class VotePage extends StatelessWidget {
               fontSize: 25),
         ),
         body: Container(
-          child: !takeState.isOutOfCards()
+          child: !takeModel.isOutOfCards()
               ? AppinioSwiper(
                   // Card Swiping Characteristics
                   onEnd: () {
@@ -55,17 +55,16 @@ class VotePage extends StatelessWidget {
                   },
                   onSwipeEnd: (previousIndex, targetIndex, activity) {
                     if (activity is Swipe) {
-                      print("prev take: ${takeState.getName(previousIndex)}");
+                      print("prev take: ${takeModel.getName(previousIndex)}");
                       print("direction: ${activity.direction}");
                       if (activity.direction == AxisDirection.right) {
-                        takeState.agree(previousIndex);
+                        takeModel.vote(previousIndex, Opinion.Agree);
                       } else if (activity.direction == AxisDirection.left) {
-                        takeState.disagree(previousIndex);
+                        takeModel.vote(previousIndex, Opinion.Disagree);
                       }
-                      takeState.voted();
                     }
                   },
-                  cardCount: takeState.takes.length,
+                  cardCount: takeModel.takes.length,
                   threshold: 50,
                   maxAngle: 30,
 
@@ -85,16 +84,16 @@ class VotePage extends StatelessWidget {
                       // Content
                       Expanded(
                           child: TakeCardContent(
-                        takeArtist: takeState.getUserName(index),
-                        takeContent: takeState.getName(index),
+                        takeArtist: takeModel.getUserName(index),
+                        takeContent: takeModel.getName(index),
                       )),
                       //Panel
                       TakeCardPanel(
-                        agreeCount: takeState.getAgrees(index),
-                        disagreeCount: takeState.getDisagrees(index),
-                        isIcyTake: takeState.getIcyOrSpicy(index),
-                        spicyness: takeState.getSpicyness(index),
-                        takeTags: takeState.getTagInfo(index),
+                        agreeCount: takeModel.getAgrees(index),
+                        disagreeCount: takeModel.getDisagrees(index),
+                        isIcyTake: takeModel.getIcyOrSpicy(index),
+                        spicyness: takeModel.getSpicyness(index),
+                        takeTags: takeModel.getTagInfo(index),
                       ),
                     ]);
                   })

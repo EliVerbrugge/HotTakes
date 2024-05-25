@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
         _redirecting = true;
         User _user = Supabase.instance.client.auth.currentUser!;
         String profileName = _user.identities?.elementAt(0).identityData!["full_name"];
-        final data = Supabase.instance.client.rpc('insert_user_if_not_exists', params: { 'client_user_id': _user.id, 'client_user_name': profileName });
+        Supabase.instance.client.rpc('insert_user_if_not_exists', params: { 'client_user_id': _user.id, 'client_user_name': profileName });
         Navigator.of(context).pushReplacementNamed('Home');
       }
     });

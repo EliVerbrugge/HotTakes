@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hot_takes/pages/splash_page.dart';
+import 'package:hot_takes/pages/user_takes_page.dart';
 import 'package:hot_takes/pages/vote_page.dart';
 import 'package:hot_takes/pages/leaderboard_page.dart';
 import 'package:hot_takes/pages/sign_in_page.dart';
 import 'package:hot_takes/pages/profile_page.dart';
-import 'package:hot_takes/components/takes_state.dart';
+import 'package:hot_takes/components/takes_model.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hot_takes/auth/secrets.dart';
@@ -18,8 +19,8 @@ void main() async {
     anonKey: '$supabaseSecretKey',
   );
 
-  runApp(ChangeNotifierProvider<TakesState>(
-    create: (context) => TakesState(),
+  runApp(ChangeNotifierProvider<TakeModel>(
+    create: (context) => TakeModel(),
     child: HotTakes(),
   ));
 }
@@ -122,6 +123,10 @@ class _HotTakes extends State<HotTakes> {
                       break;
                     case 3:
                       _navigatorKey.currentState
+                          ?.pushReplacementNamed("Leaderboard");
+                      break;
+                    case 4:
+                      _navigatorKey.currentState
                           ?.pushReplacementNamed("Profile");
                       break;
                   }
@@ -163,6 +168,11 @@ class _HotTakes extends State<HotTakes> {
           showBar = true;
         });
         return MaterialPageRoute(builder: (context) => ProfilePage());
+      case "My Takes":
+        setState(() {
+          showBar = true;
+        });
+        return MaterialPageRoute(builder: (context) => MyTakesPage());
       default:
         setState(() {
           showBar = true;
