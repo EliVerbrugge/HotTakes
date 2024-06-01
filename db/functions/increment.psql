@@ -1,0 +1,8 @@
+create function increment(row_id int)
+returns void as
+$$
+  update "Takes" 
+  set agrees = agrees + 1 --increments is done here
+  where take_id = row_id
+$$
+language sql volatile;

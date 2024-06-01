@@ -1,0 +1,15 @@
+CREATE OR REPLACE FUNCTION get_takes_without_votes(client_user_id TEXT)
+RETURNS TABLE(take_id bigint, created_at timestamptz, agrees int, disagrees int, author_user_id uuid, take text, topic_id int, user_name text)
+security definer set search_path = public
+AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT "Takes".*, "Users".user_name
+    FROM "Takes"
+    left outer join "Users" on "Takes".author_id = "Users".user_id
+    left outer join "UserVotes" on "UserVotes".user_id = uuid(client_user_id) and "Takes".take_id = "UserVotes".take_id
+    WHERE "Takes".author_id != uuid(client_user_id) and vote_id is null
+    ORDER BY take_id ASC;
+END;
+$$ LANGUAGE plpgsql;

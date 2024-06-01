@@ -1,0 +1,18 @@
+CREATE OR REPLACE FUNCTION get_takes_in_topics_without_votes(client_user_id TEXT, topics TEXT[])
+RETURNS TABLE(take_id bigint, created_at timestamptz, agrees int, disagrees int, author_user_id uuid, take text, user_name text, topic_name text, topic_id bigint, topic_type "Tag Type")
+security definer set search_path = public
+AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT "Takes".take_id, "Takes".created_at, "Takes".agrees, "Takes".disagrees, "Takes".author_id, "Takes".take, "Users".user_name, "Topics".topic_name, "Topics".topic_id, "Topics".topic_type
+    FROM "Takes"
+    left outer join "Users" on "Takes".author_id = "Users".user_id
+    left outer join "UserVotes" on "UserVotes".user_id = uuid(client_user_id) and "Takes".take_id = "UserVotes".take_id
+    left outer join "Topics" on "Takes".topic_id = "Topics".topic_id
+    WHERE "Takes".author_id != uuid(client_user_id) and vote_id is null and "Topics".topic_name = ANY(topics)
+    ORDER BY take_id ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION get_takes_in_topics_without_votes(text, text[])

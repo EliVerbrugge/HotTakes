@@ -1,0 +1,16 @@
+CREATE OR REPLACE FUNCTION get_user_takes(client_user_id TEXT)
+RETURNS TABLE(take_id bigint, created_at timestamptz, agrees int, disagrees int, author_user_id uuid, take text, topic_id int, user_name text)
+security definer set search_path = public
+AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT "Takes".*, "Users".user_name
+    FROM "Takes"
+    left outer join "Users" on "Takes".author_id = "Users".user_id
+    WHERE "Takes".author_id = uuid(client_user_id)
+    ORDER BY agrees DESC;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION get_user_takes(text)

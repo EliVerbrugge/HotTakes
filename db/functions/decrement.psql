@@ -1,0 +1,8 @@
+create function decrement(row_id int)
+returns void as
+$$
+  update "Takes" 
+  set disagrees = disagrees + 1 --decrements is done here
+  where take_id = row_id
+$$
+language sql volatile;

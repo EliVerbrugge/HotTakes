@@ -1,0 +1,18 @@
+CREATE OR REPLACE FUNCTION get_user_topics(client_user_id TEXT)
+RETURNS TABLE(topic_id BIGINT, topic_name TEXT, topic_type "Tag Type", is_subscribed bool)
+security definer set search_path = public
+AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT "Topics".topic_id, 
+           "Topics".topic_name, 
+           "Topics".topic_type, 
+            CASE 
+                WHEN "User_Topics".user_id IS NOT NULL THEN true
+                ELSE false
+            END AS is_subscribed
+    FROM "Topics" 
+    left outer join "User_Topics" ON "User_Topics".topic_id = "Topics".topic_id and "User_Topics".user_id = uuid(client_user_id);
+END;
+$$ LANGUAGE plpgsql;

@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION get_num_takes_for_user(client_user_id TEXT)
+RETURNS TABLE(num int)
+security definer set search_path = public
+declare
+	total integer;
+AS
+$$
+BEGIN
+   SELECT count(distinct take_id) into total FROM "Takes" WHERE author_id = uuid(user_id);
+   RETURN total;
+END;
+$$ LANGUAGE plpgsql;

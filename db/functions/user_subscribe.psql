@@ -1,0 +1,8 @@
+CREATE OR REPLACE FUNCTION user_subscribe(client_user_id TEXT, topic_id_to_subscribe bigint) RETURNS VOID 
+security definer set search_path = public
+AS
+$$
+BEGIN
+   INSERT INTO "User_Topics" (user_id, topic_id) VALUES (uuid(client_user_id), topic_id_to_subscribe);
+END
+$$ LANGUAGE plpgsql;

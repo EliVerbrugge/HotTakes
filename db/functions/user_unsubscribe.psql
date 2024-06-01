@@ -1,0 +1,8 @@
+CREATE OR REPLACE FUNCTION user_unsubscribe(client_user_id TEXT, topic_id_to_unsubscribe bigint) RETURNS VOID 
+security definer set search_path = public
+AS
+$$
+BEGIN
+   DELETE FROM "User_Topics" WHERE "User_Topics".user_id = uuid(client_user_id) AND "User_Topics".topic_id = topic_id_to_unsubscribe;
+END;
+$$ LANGUAGE plpgsql;

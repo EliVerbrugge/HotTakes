@@ -1,0 +1,10 @@
+CREATE OR REPLACE FUNCTION insert_user_if_not_exists(client_user_id TEXT, client_user_name TEXT) RETURNS VOID 
+security definer set search_path = public
+AS
+$$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM "Users" WHERE user_id = uuid(client_user_id)) THEN
+        INSERT INTO "Users" (user_id, user_name, created_at) VALUES (uuid(client_user_id), client_user_name, NOW());
+    END IF;
+END;
+$$ LANGUAGE plpgsql;

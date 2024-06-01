@@ -1,0 +1,14 @@
+CREATE OR REPLACE FUNCTION get_top_n_takes(top_n int)
+RETURNS TABLE(take_id bigint, created_at timestamptz, agrees int, disagrees int, author_user_id uuid, take text, topic_id int, user_name text)
+security definer set search_path = public
+AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT "Takes".*, "Users".user_name
+    FROM "Takes"
+    left outer join "Users" on "Takes".author_id = "Users".user_id
+    ORDER BY agrees desc
+    limit top_n;
+END;
+$$ LANGUAGE plpgsql;
