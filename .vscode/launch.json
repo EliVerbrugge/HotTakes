@@ -20,6 +20,13 @@
             ],
         },
         {
+            "name": "hot_takes (android)",
+            "cwd": "hot_takes",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug"
+        },
+        {
             "name": "hot_takes (profile mode)",
             "cwd": "hot_takes",
             "request": "launch",
