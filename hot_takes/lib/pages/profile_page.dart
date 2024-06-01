@@ -31,9 +31,13 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       key: UniqueKey(),
       appBar: AppBar(
-        leading: Image.asset("assets/img/take_icon.png"),
+        //leading: Image.asset("assets/img/take_icon.png"),
         title: Text("Hot Takes"),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Colors.black,
+        titleTextStyle: TextStyle(
+            color: Color.fromRGBO(175, 0, 123, 1),
+            fontWeight: FontWeight.bold,
+            fontSize: 25),
       ),
       body: Center(
           child: Padding(
