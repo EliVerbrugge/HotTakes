@@ -1,19 +1,22 @@
+import 'package:hot_takes/components/topic.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'take.dart';
 
 /// Creates a take with [name] in the remote DB
-void createTake(String name) async {
+void createTake(String name, Topic topic) async {
   // Reference to the database we will be querying for takes
   final databaseReference = Supabase.instance;
   final myUserId = Supabase.instance.client.auth.currentUser!.id;
 
-  await databaseReference.client.from("Takes").insert({
+  final data = await databaseReference.client.from("Takes").insert({
     'take': name,
     'agrees': 0,
     'disagrees': 0,
-    'author_id': myUserId
-  });
+    'author_id': myUserId,
+    'topic_id': topic.topic_id
+  }).select();
+  print(data);
 }
 
 Future<int> getUserNumTakes(String user_id) async {
