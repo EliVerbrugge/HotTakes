@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hot_takes/pages/create_take_page.dart';
 import 'package:hot_takes/pages/splash_page.dart';
 import 'package:hot_takes/pages/user_takes_page.dart';
 import 'package:hot_takes/pages/vote_page.dart';
@@ -10,6 +11,8 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hot_takes/auth/secrets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
+import 'pages/select_topic_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,12 +65,12 @@ class _HotTakes extends State<HotTakes> {
                 destinations: [
                   NavigationDestination(
                     selectedIcon: Icon(
-                      Icons.home,
+                      Icons.filter_list,
                       color: Colors.white,
                     ),
-                    icon: Icon(Icons.home_outlined,
+                    icon: Icon(Icons.filter_list_outlined,
                         color: Color.fromRGBO(69, 69, 69, 1)),
-                    label: 'Home',
+                    label: 'Pesonalize',
                   ),
                   NavigationDestination(
                     selectedIcon: Icon(
@@ -111,15 +114,15 @@ class _HotTakes extends State<HotTakes> {
                 onDestinationSelected: (int index) {
                   switch (index) {
                     case 0:
-                      _navigatorKey.currentState?.pushReplacementNamed("Home");
+                      _navigatorKey.currentState
+                          ?.pushReplacementNamed("Select Topics");
                       break;
                     case 1:
-                      _navigatorKey.currentState
-                          ?.pushReplacementNamed("Leaderboard");
+                      _navigatorKey.currentState?.pushReplacementNamed("Home");
                       break;
                     case 2:
                       _navigatorKey.currentState
-                          ?.pushReplacementNamed("Leaderboard");
+                          ?.pushReplacementNamed("Create Take");
                       break;
                     case 3:
                       _navigatorKey.currentState
@@ -173,6 +176,16 @@ class _HotTakes extends State<HotTakes> {
           showBar = true;
         });
         return MaterialPageRoute(builder: (context) => MyTakesPage());
+      case "Create Take":
+        setState(() {
+          showBar = true;
+        });
+        return MaterialPageRoute(builder: (context) => CreateTakePage());
+      case "Select Topics":
+        setState(() {
+          showBar = true;
+        });
+        return MaterialPageRoute(builder: (context) => SelectTopicPage());
       default:
         setState(() {
           showBar = true;
