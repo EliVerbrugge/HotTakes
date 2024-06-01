@@ -3,8 +3,9 @@ import 'package:get/get_utils/src/platform/platform.dart';
 
 import 'package:hot_takes/components/rating_components/swipe_counter.dart';
 import 'package:hot_takes/components/rating_components/spicyness_star_rating.dart';
-import 'package:hot_takes/components/tag_components/tag_json_object.dart';
-import 'package:hot_takes/components/tag_components/tag_list.dart';
+import 'package:hot_takes/components/tag_components/topic_list.dart';
+
+import '../topic.dart';
 
 /*
 TODO LIST:
@@ -26,14 +27,15 @@ class TakeCardPanel extends StatelessWidget {
   final int agreeCount;
   final int spicyness;
   final bool isIcyTake;
-  final tagParent takeTags;
+  final Topic? topic;
 
-  TakeCardPanel(
-      {this.agreeCount = -1,
-      this.disagreeCount = -1,
-      this.spicyness = 0,
-      this.isIcyTake = false,
-      required this.takeTags});
+  TakeCardPanel({
+    this.agreeCount = -1,
+    this.disagreeCount = -1,
+    this.spicyness = 0,
+    this.topic = null,
+    this.isIcyTake = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +125,9 @@ class TakeCardPanel extends StatelessWidget {
         ),
         SizedBox(height: 10),
         // Tags
-        TagList(tags: takeTags),
+        TopicWidget(
+          topic: topic,
+        ),
       ]),
     );
   }
