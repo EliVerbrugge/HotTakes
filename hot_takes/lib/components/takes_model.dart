@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:js_interop';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -23,8 +24,7 @@ class TakeModel extends ChangeNotifier {
   // A list of current takes in the DB
   List<Take> takes = [];
 
-  List<Topic> topics = [];
-  late Map<String, bool> topic_names;
+  late Map<Topic, bool> topics;
 
   // Lock for async code
   final Lock _lock = Lock();
@@ -44,18 +44,28 @@ class TakeModel extends ChangeNotifier {
   }
 
   Future<void> fetchTopics() async {
-    topics = await getAllTopics(myUserId);
-    topic_names = Map.fromIterable(topics,
-        key: (topic) => topic.topic_name, value: (item) => true);
+    topics = await getUserSelectedTopics(myUserId);
   }
 
-  Map<String, bool> getTopicNames() {
-    return topic_names;
+  Map<Topic, bool> getTopicNames() {
+    return topics;
   }
 
-  void addTopic(String topic_name) {
-    if (topic_names.containsKey(topic_name)) {
-      topic_names[topic_name] = true;
+  void addTopic(Topic topic) async {
+    if (topics.containsKey(topic) && !topics[topic]!) {
+      // Update checkbox to selected, and write an entry to the db
+      topics[topic] = true;
+      var data;
+
+      try {
+        data = await databaseReference.client.rpc('user_subscribe', params: {
+          'client_user_id': myUserId,
+          'topic_id_to_subscribe': topic.topic_id
+        });
+      } catch (e) {
+        print(e);
+      }
+
       takes.clear();
       swipeNum = 0;
       currentPos = 0;
@@ -63,9 +73,21 @@ class TakeModel extends ChangeNotifier {
     }
   }
 
-  void removeTopic(String topic_name) {
-    if (topic_names.containsKey(topic_name)) {
-      topic_names[topic_name] = false;
+  void removeTopic(Topic topic) async {
+    if (topics.containsKey(topic) && topics[topic]!) {
+      topics[topic] = false;
+      var data;
+      try {
+        data = await databaseReference.client.rpc('user_unsubscribe', params: {
+          'client_user_id': myUserId,
+          'topic_id_to_unsubscribe': topic.topic_id
+        });
+      } catch (e) {
+        print(e);
+      }
+
+      print(data);
+
       takes.clear();
       swipeNum = 0;
       currentPos = 0;
@@ -89,7 +111,7 @@ class TakeModel extends ChangeNotifier {
       // utilize range to increment through this list 'step' items at a time
       var data;
       int relativePos = currentPos - swipeNum;
-      if (topic_names.isEmpty) {
+      if (topics.isEmpty) {
         try {
           data = await databaseReference.client.rpc('get_takes_without_votes',
               params: {
@@ -104,9 +126,9 @@ class TakeModel extends ChangeNotifier {
           data = await databaseReference.client
               .rpc('get_takes_in_topics_without_votes', params: {
             'client_user_id': myUserId,
-            'topics': topic_names.entries
+            'topics': topics.entries
                 .where((entry) => entry.value)
-                .map((entry) => entry.key)
+                .map((entry) => entry.key.topic_name)
                 .toList()
           }).range(relativePos, relativePos + (step - 1));
         } catch (e) {

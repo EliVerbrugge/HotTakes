@@ -19,7 +19,7 @@ class _SelectTopicPage extends State<SelectTopicPage> {
   final myController = TextEditingController();
   late List<String> topic_names;
 
-  late Map<String, bool> checkboxes;
+  late Map<Topic, bool> checkboxes;
 
   Widget build(BuildContext context) {
     final takeModel = Provider.of<TakeModel>(context);
@@ -47,10 +47,10 @@ class _SelectTopicPage extends State<SelectTopicPage> {
               key: PageStorageKey("Test"),
               itemCount: checkboxes.length,
               itemBuilder: (context, index) {
-                String key = checkboxes.keys.elementAt(index);
+                Topic key = checkboxes.keys.elementAt(index);
 
                 return CheckboxListTile(
-                  title: new Text(key),
+                  title: new Text(key.topic_name),
                   value: checkboxes[key],
                   onChanged: (bool? value) {
                     if (value == true) {
