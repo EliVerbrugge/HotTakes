@@ -46,31 +46,37 @@ class VotePage extends StatelessWidget {
               fontWeight: FontWeight.bold,
               fontSize: 25),
         ),
-        body: Container(
-          child: !takeModel.isOutOfCards()
-              ? AppinioSwiper(
-                  // Card Swiping Characteristics
-                  onEnd: () {
-                    firstTime = false;
-                  },
-                  onSwipeEnd: (previousIndex, targetIndex, activity) {
-                    if (activity is Swipe) {
-                      print("prev take: ${takeModel.getName(previousIndex)}");
-                      print("direction: ${activity.direction}");
-                      if (activity.direction == AxisDirection.right) {
-                        takeModel.vote(previousIndex, Opinion.Agree);
-                      } else if (activity.direction == AxisDirection.left) {
-                        takeModel.vote(previousIndex, Opinion.Disagree);
-                      }
-                    }
-                  },
-                  cardCount: takeModel.takes.length,
-                  threshold: 50,
-                  maxAngle: 30,
+        body: !takeModel.initialSetupComplete
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Container(
+                child: !takeModel.isOutOfCards()
+                    ? AppinioSwiper(
+                        // Card Swiping Characteristics
+                        onEnd: () {
+                          firstTime = false;
+                        },
+                        onSwipeEnd: (previousIndex, targetIndex, activity) {
+                          if (activity is Swipe) {
+                            print(
+                                "prev take: ${takeModel.getName(previousIndex)}");
+                            print("direction: ${activity.direction}");
+                            if (activity.direction == AxisDirection.right) {
+                              takeModel.vote(previousIndex, Opinion.Agree);
+                            } else if (activity.direction ==
+                                AxisDirection.left) {
+                              takeModel.vote(previousIndex, Opinion.Disagree);
+                            }
+                          }
+                        },
+                        cardCount: takeModel.takes.length,
+                        swipeOptions:
+                            SwipeOptions.only(left: true, right: true),
 
-                  // Actual Take Object
-                  cardBuilder: (BuildContext context, int index) {
-                    /* 
+                        // Actual Take Object
+                        cardBuilder: (BuildContext context, int index) {
+                          /* 
                     Card is divided into two main parts, we will call them
                     Content and Panel. Content is the top half, and Panel is
                     the bottom. Below will go over what info each will have
@@ -80,39 +86,42 @@ class VotePage extends StatelessWidget {
                     
 
                     */
-                    return Column(children: [
-                      // Content
-                      Expanded(
-                          child: TakeCardContent(
-                        takeArtist: takeModel.getUserName(index),
-                        takeContent: takeModel.getName(index),
-                      )),
-                      //Panel
-                      TakeCardPanel(
-                        agreeCount: takeModel.getAgrees(index),
-                        disagreeCount: takeModel.getDisagrees(index),
-                        isIcyTake: takeModel.getIcyOrSpicy(index),
-                        spicyness: takeModel.getSpicyness(index),
-                        takeTags: takeModel.getTagInfo(index),
-                      ),
-                    ]);
-                  })
-              : Card(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Out of Takes",
-                        style: TextStyle(fontSize: 25),
-                      ),
-                      Icon(
-                        Icons.close_rounded,
-                        color: Colors.red,
-                        size: 40,
-                      )
-                    ],
-                  ),
-                ),
-        ));
+                          return Column(children: [
+                            // Content
+                            Expanded(
+                                child: TakeCardContent(
+                              takeArtist: takeModel.getUserName(index),
+                              takeContent: takeModel.getName(index),
+                            )),
+                            //Panel
+                            TakeCardPanel(
+                              agreeCount: takeModel.getAgrees(index),
+                              disagreeCount: takeModel.getDisagrees(index),
+                              isIcyTake: takeModel.getIcyOrSpicy(index),
+                              topic: takeModel.getTopic(index),
+                              spicyness: takeModel.getSpicyness(index),
+                            ),
+                          ]);
+                        })
+                    : Row(children: [
+                        Expanded(
+                            child: Card(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Out of Takes",
+                                style: TextStyle(fontSize: 25),
+                              ),
+                              Image.asset(
+                                "assets/img/crying.png",
+                                width: 100,
+                                height: 100,
+                              )
+                            ],
+                          ),
+                        ))
+                      ]),
+              ));
   }
 }
