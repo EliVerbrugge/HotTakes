@@ -38,7 +38,11 @@ class Take {
     topic = t;
 
     // Spicyness is the number of disagrees as ratio of total opinions, out of 5
-    spicyness = ((disagreeCount / (agreeCount + disagreeCount)) * 5).toInt();
+    if (agreeCount > 0 || disagreeCount > 0) {
+      spicyness = ((disagreeCount / (agreeCount + disagreeCount)) * 5).toInt();
+    } else {
+      spicyness = 0;
+    }
   }
 
   Take.fromJson(Map<String, dynamic> json) {
@@ -56,6 +60,10 @@ class Take {
     }
 
     // Spicyness is the number of disagrees as ratio of total opinions, out of 5
-    spicyness = ((disagreeCount / (agreeCount + disagreeCount)) * 5).toInt();
+    if (agreeCount > 0 || disagreeCount > 0) {
+      spicyness = ((disagreeCount / (agreeCount + disagreeCount)) * 5).toInt();
+    } else {
+      spicyness = 0;
+    }
   }
 }
