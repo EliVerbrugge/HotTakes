@@ -17,10 +17,24 @@ class _CreateTakePage extends State<CreateTakePage> {
   Topic? _selected = Topic("Movies", 2, TopicType.Category);
   final myController = TextEditingController();
 
-  void onSubmit() {
+  void onSubmit(BuildContext context) {
+    // Get the current selected values
     String take_name = myController.text;
     Topic val = _selected!;
-    createTake(take_name, val);
+
+    if (take_name.isNotEmpty) {
+      createTake(take_name, val);
+
+      //Clear input field to make it more discernible that take was submitted
+      myController.clear;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Submitted Take!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Your take must have content!')),
+      );
+    }
   }
 
   Widget build(BuildContext context) {
@@ -94,7 +108,8 @@ class _CreateTakePage extends State<CreateTakePage> {
                   }),
             ),
             SizedBox(height: 24),
-            OutlinedButton(onPressed: onSubmit, child: Text("Submit"))
+            OutlinedButton(
+                onPressed: () => onSubmit(context), child: Text("Submit"))
           ],
         )));
   }
