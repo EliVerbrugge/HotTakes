@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hot_takes/components/takes_list.dart';
 import 'package:hot_takes/components/topic.dart';
 import 'package:hot_takes/components/topic_utils.dart';
@@ -15,7 +16,13 @@ class CreateTakePage extends StatefulWidget {
 class _CreateTakePage extends State<CreateTakePage> {
   final myUserId = Supabase.instance.client.auth.currentUser!.id;
   Topic? _selected = Topic("Movies", 2, TopicType.Category);
-  final myController = TextEditingController();
+  late TextEditingController myController;
+
+  @override
+  void initState() {
+    super.initState();
+    myController = TextEditingController();
+  }
 
   void onSubmit(BuildContext context) {
     // Get the current selected values
@@ -26,7 +33,8 @@ class _CreateTakePage extends State<CreateTakePage> {
       createTake(take_name, val);
 
       //Clear input field to make it more discernible that take was submitted
-      myController.clear;
+      myController.clear();
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Submitted Take!')),
       );
@@ -59,7 +67,7 @@ class _CreateTakePage extends State<CreateTakePage> {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: TextFormField(
                 controller: myController,
-                maxLines: 3,
+                maxLines: 2,
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
                   labelText: 'Enter your take',
