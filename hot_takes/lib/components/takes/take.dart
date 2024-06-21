@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'topic.dart';
+import '../topics/topic.dart';
 
 enum Opinion {
   Agree(name: "Agree"),

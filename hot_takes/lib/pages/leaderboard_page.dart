@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hot_takes/components/takes_list.dart';
 
-import '../components/take.dart';
-import '../components/take_utils.dart';
+import '../components/takes/take.dart';
+import '../components/takes/take_utils.dart';
 
 class LeaderboardPage extends StatefulWidget {
   @override
@@ -30,16 +30,22 @@ class _LeaderboardPage extends State<LeaderboardPage> {
         ),
         body: Center(
             child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(height: 24),
-            Text(
-              "Top Takes",
-              style: TextStyle(fontSize: 25),
+            SizedBox(
+              width: double.infinity,
+              child: Container(
+                margin: const EdgeInsets.only(left: 20, top: 20),
+                child: Text(
+                  "Top Takes",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(color: Colors.grey, fontSize: 18),
+                ),
+              ),
             ),
             SizedBox(height: 24),
-            TakesList(dataFunc: getTopNTakes(10))
+            TakesList(dataFunc: getTopNTakes(6))
           ],
         )));
   }

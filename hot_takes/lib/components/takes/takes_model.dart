@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hot_takes/components/take.dart';
-import 'package:hot_takes/components/topic.dart';
-import 'package:hot_takes/components/topic_utils.dart';
+import 'package:hot_takes/components/takes/take.dart';
+import 'package:hot_takes/components/topics/topic.dart';
+import 'package:hot_takes/components/topics/topic_utils.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:synchronized/synchronized.dart';
 

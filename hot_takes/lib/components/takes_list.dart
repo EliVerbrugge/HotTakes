@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hot_takes/components/take.dart';
+import 'package:hot_takes/components/takes/take.dart';
 
 class TakesList extends StatefulWidget {
   final dataFunc;
@@ -23,6 +23,40 @@ class _TakesList extends State<TakesList> {
     return double.parse((result).toStringAsFixed(2));
   }
 
+  // Widget for the agree and disagree counts
+  Widget _agreesDisagreesWidget(String disagreeCount, String agreeCount) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Text("Agrees: ${agreeCount}"),
+        Text("Disagrees: ${disagreeCount}")
+      ],
+    );
+  }
+
+  ///Widget for the take description
+  Widget _takeName(String takeName) {
+    return Container(
+      child: Text(
+        takeName,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(fontSize: 16),
+      ),
+    );
+  }
+
+  ///Widget for the take description
+  Widget _takeRating(String spicyness) {
+    return Container(
+      width: 50,
+      child: Text(
+        spicyness + "%",
+        style: const TextStyle(fontSize: 12),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     //
@@ -40,21 +74,16 @@ class _TakesList extends State<TakesList> {
             itemCount: takes!.length,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            prototypeItem: Card(
-                child: ListTile(
-              title: Text(takes!.isNotEmpty ? takes!.first.takeName : ""),
-              subtitle: Text(""),
-            )),
             itemBuilder: (context, index) {
               return Card(
                   child: ListTile(
-                leading: Text(
-                    "${takes!.isNotEmpty ? GetAgreePct(takes![index]) : 0}%"),
-                title: Text(takes!.isNotEmpty ? takes![index].takeName : ""),
+                leading: _takeRating(GetAgreePct(takes![index]).toString()),
+                title: _takeName(takes![index].takeName),
                 subtitle: Text(
-                    "Agrees: ${takes!.isNotEmpty ? takes![index].agreeCount : ""}  Disagrees: ${takes!.isNotEmpty ? takes![index].disagreeCount : ""}"),
-                trailing: Text(
                     "Author: ${takes!.isNotEmpty ? takes![index].userName : ""}"),
+                trailing: _agreesDisagreesWidget(
+                    takes![index].disagreeCount.toString(),
+                    takes![index].agreeCount.toString()),
               ));
             },
           ));

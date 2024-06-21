@@ -6,7 +6,7 @@ import 'package:hot_takes/pages/vote_page.dart';
 import 'package:hot_takes/pages/leaderboard_page.dart';
 import 'package:hot_takes/pages/sign_in_page.dart';
 import 'package:hot_takes/pages/profile_page.dart';
-import 'package:hot_takes/components/takes_model.dart';
+import 'package:hot_takes/components/takes/takes_model.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hot_takes/auth/secrets.dart';

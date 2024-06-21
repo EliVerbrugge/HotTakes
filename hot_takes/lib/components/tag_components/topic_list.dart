@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../topic.dart';
+import '../topics/topic.dart';
 
 class TopicWidget extends StatelessWidget {
   final Topic? topic;

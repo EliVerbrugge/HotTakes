@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:hot_takes/components/takes_list.dart';
-import 'package:hot_takes/components/topic.dart';
-import 'package:hot_takes/components/topic_utils.dart';
+import 'package:hot_takes/components/topics/topic.dart';
+import 'package:hot_takes/components/topics/topic_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../components/take.dart';
-import '../components/take_utils.dart';
-import '../components/takes_model.dart';
+import '../components/takes/take.dart';
+import '../components/takes/take_utils.dart';
+import '../components/takes/takes_model.dart';
 
 class SelectTopicPage extends StatefulWidget {
   @override
@@ -38,10 +38,6 @@ class _SelectTopicPage extends State<SelectTopicPage> {
         body: Center(
             child: Column(
           children: <Widget>[
-            Text(
-              "Select topics you are interested in",
-              style: TextStyle(fontSize: 25),
-            ),
             Flexible(
                 child: ListView.builder(
               key: PageStorageKey("Test"),
@@ -49,26 +45,73 @@ class _SelectTopicPage extends State<SelectTopicPage> {
               itemBuilder: (context, index) {
                 Topic key = checkboxes.keys.elementAt(index);
 
-                return CheckboxListTile(
-                  title: new Text(key.topic_name),
-                  value: checkboxes[key],
-                  onChanged: (bool? value) {
-                    if (value == true) {
-                      setState(() {
-                        takeModel.addTopic(key);
-                      });
-                    } else if (value == false) {
-                      setState(() {
-                        takeModel.removeTopic(key);
-                      });
-                    }
-                  },
-                );
+                return Card(
+                    borderOnForeground: false,
+                    child: JoinButtonTile(
+                        title: key.topic_name,
+                        topicKey: key,
+                        isJoined: checkboxes[key]!));
               },
             )),
           ],
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
         )));
+  }
+}
+
+class JoinButtonTile extends StatefulWidget {
+  final String title;
+  final bool isJoined;
+  final Topic topicKey;
+
+  const JoinButtonTile({
+    Key? key,
+    required this.title,
+    required this.topicKey,
+    required this.isJoined,
+  }) : super(key: key);
+
+  @override
+  _JoinButtonTileState createState() => _JoinButtonTileState();
+}
+
+class _JoinButtonTileState extends State<JoinButtonTile> {
+  late bool _isJoined;
+
+  @override
+  void initState() {
+    super.initState();
+    _isJoined = widget.isJoined;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final takeModel = Provider.of<TakeModel>(context);
+
+    return ListTile(
+      title: Text(widget.title),
+      trailing: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            if (_isJoined == false) {
+              setState(() {
+                takeModel.addTopic(widget.topicKey);
+              });
+            } else if (_isJoined == true) {
+              setState(() {
+                takeModel.removeTopic(widget.topicKey);
+              });
+            }
+            _isJoined = !_isJoined;
+          });
+        },
+        child: Text(_isJoined ? 'Unfollow' : 'Follow'),
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: _isJoined ? Colors.red : Colors.blue,
+        ),
+      ),
+    );
   }
 }

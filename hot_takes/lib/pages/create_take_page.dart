@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hot_takes/components/takes_list.dart';
-import 'package:hot_takes/components/topic.dart';
-import 'package:hot_takes/components/topic_utils.dart';
+import 'package:hot_takes/components/topics/topic.dart';
+import 'package:hot_takes/components/topics/topic_utils.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../components/take.dart';
-import '../components/take_utils.dart';
+import '../components/takes/take.dart';
+import '../components/takes/take_utils.dart';
 
 class CreateTakePage extends StatefulWidget {
   @override

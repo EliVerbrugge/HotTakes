@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../components/take_utils.dart';
+import '../components/takes/take_utils.dart';
 
 class ProfilePage extends StatelessWidget {
   final myUserId = Supabase.instance.client.auth.currentUser!.id;

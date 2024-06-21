@@ -1,4 +1,4 @@
-import 'package:hot_takes/components/topic.dart';
+import 'package:hot_takes/components/topics/topic.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'take.dart';

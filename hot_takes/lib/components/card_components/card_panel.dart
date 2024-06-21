@@ -5,7 +5,7 @@ import 'package:hot_takes/components/rating_components/swipe_counter.dart';
 import 'package:hot_takes/components/rating_components/spicyness_star_rating.dart';
 import 'package:hot_takes/components/tag_components/topic_list.dart';
 
-import '../topic.dart';
+import '../topics/topic.dart';
 
 /*
 TODO LIST:
