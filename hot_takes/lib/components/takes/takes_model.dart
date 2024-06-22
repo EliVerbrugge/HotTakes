@@ -182,6 +182,10 @@ class TakeModel extends ChangeNotifier {
     return takes[index].spicyness;
   }
 
+  int getTakeId(int index) {
+    return takes[index].take_id;
+  }
+
   bool getIcyOrSpicy(int index) {
     print(takes[index].isIcy);
     return takes[index].isIcy;

@@ -4,6 +4,8 @@ import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:hot_takes/components/rating_components/swipe_counter.dart';
 import 'package:hot_takes/components/rating_components/spicyness_star_rating.dart';
 import 'package:hot_takes/components/tag_components/topic_list.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 
 import '../topics/topic.dart';
 
@@ -26,12 +28,14 @@ class TakeCardPanel extends StatelessWidget {
   final int disagreeCount;
   final int agreeCount;
   final int spicyness;
+  final int takeId;
   final bool isIcyTake;
   final Topic? topic;
 
   TakeCardPanel({
     this.agreeCount = -1,
     this.disagreeCount = -1,
+    required this.takeId,
     this.spicyness = 0,
     this.topic = null,
     this.isIcyTake = false,
@@ -60,18 +64,20 @@ class TakeCardPanel extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                         shape: CircleBorder(),
                         side: const BorderSide(width: 0)),
-                    onPressed: () {},
-                    child: Icon(
-                      Icons.history_edu_outlined,
-                      color: Colors.white,
-                      size: 30.0,
-                    ),
-                  ),
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                        shape: CircleBorder(),
-                        side: const BorderSide(width: 0)),
-                    onPressed: () {},
+                    onPressed: () async {
+                      String toCopy = kDebugMode
+                          ? 'http://localhost:3000/#/Home/' + takeId.toString()
+                          : 'https://hottakes-1a324.web.app/#/Home/' +
+                              takeId.toString();
+                      await Clipboard.setData(ClipboardData(text: toCopy));
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Copied link!"),
+                          duration: Durations.short1,
+                        ),
+                      );
+                    },
                     child: Icon(
                       Icons.share_outlined,
                       color: Colors.white,

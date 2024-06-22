@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hot_takes/components/takes/take.dart';
 
 class TakesList extends StatefulWidget {
@@ -84,6 +86,21 @@ class _TakesList extends State<TakesList> {
                 trailing: _agreesDisagreesWidget(
                     takes![index].disagreeCount.toString(),
                     takes![index].agreeCount.toString()),
+                onLongPress: () async {
+                  String toCopy = kDebugMode
+                      ? 'http://localhost:3000/#/Home/' +
+                          takes![index].toString()
+                      : 'https://hottakes-1a324.web.app/#/Home/' +
+                          takes![index].toString();
+                  await Clipboard.setData(ClipboardData(text: toCopy));
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Copied link!"),
+                      duration: Durations.short1,
+                    ),
+                  );
+                },
               ));
             },
           ));

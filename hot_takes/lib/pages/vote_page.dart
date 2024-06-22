@@ -97,6 +97,7 @@ class VotePage extends StatelessWidget {
                             TakeCardPanel(
                               agreeCount: takeModel.getAgrees(index),
                               disagreeCount: takeModel.getDisagrees(index),
+                              takeId: takeModel.getTakeId(index),
                               isIcyTake: takeModel.getIcyOrSpicy(index),
                               topic: takeModel.getTopic(index),
                               spicyness: takeModel.getSpicyness(index),
