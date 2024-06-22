@@ -64,3 +64,38 @@ Future<List<Take>> getUsersTakes(String user_id) async {
   }
   return t;
 }
+
+Future<Take?> getTake(String user_id, int take_id) async {
+  // Reference to the database we will be querying for takes
+  final databaseReference = Supabase.instance;
+
+  Take? t = null;
+
+  final data = await databaseReference.client.rpc("get_take_if_without_votes",
+      params: {'client_user_id': user_id, 'this_take_id': take_id});
+
+  for (Map<String, dynamic> obj in data) {
+    t = Take.fromJson(obj);
+  }
+  return t;
+}
+
+void vote(Take t, String user_id, Opinion op) async {
+  // Reference to the database we will be querying for takes
+  final databaseReference = Supabase.instance;
+  await databaseReference.client.from("UserVotes").insert(
+      {'user_id': user_id, 'take_id': t.take_id, 'user_opinion': op.name});
+
+  switch (op) {
+    case Opinion.Disagree:
+      await databaseReference.client
+          .rpc("decrementvote", params: {'row_id': '${t.take_id}'});
+      break;
+    case Opinion.Agree:
+      await databaseReference.client
+          .rpc("incrementvote", params: {'row_id': '${t.take_id}'});
+      break;
+    case Opinion.Neutral:
+      break;
+  }
+}
