@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashPage extends StatefulWidget {
@@ -30,9 +31,9 @@ class _SplashPageState extends State<SplashPage> {
         'client_user_id': _user.id,
         'client_user_name': profileName
       });
-      Navigator.of(context).pushReplacementNamed('Home');
+      context.go("/Home");
     } else {
-      Navigator.of(context).pushReplacementNamed('Login');
+      context.go("/Login");
     }
   }
 

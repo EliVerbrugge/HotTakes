@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:google_sign_in/google_sign_in.dart';
@@ -32,15 +33,9 @@ class _LoginPageState extends State<LoginPage> {
                 ? 'http://localhost:3000/'
                 : 'https://hottakes-1a324.web.app');
       } else if (Platform.isAndroid) {
-        /// TODO: update the Web client ID with your own.
-        ///
-        /// Web Client ID that you registered with Google Cloud.
         const webClientId =
             '807979845276-4b0fhfpr2l4644j2ba66sd30psp8safl.apps.googleusercontent.com';
 
-        /// TODO: update the iOS client ID with your own.
-        ///
-        /// iOS Client ID that you registered with Google Cloud.
         const androidClientId =
             '807979845276-n6k7v69t2i4o3osvrbtedf3qdt8b77hm.apps.googleusercontent.com';
 
@@ -107,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
           'client_user_id': _user.id,
           'client_user_name': profileName
         });
-        Navigator.of(context).pushReplacementNamed('Home');
+        context.go("/Home");
       }
     });
     super.initState();

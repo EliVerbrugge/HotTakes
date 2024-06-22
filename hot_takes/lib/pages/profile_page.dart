@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../components/takes/take_utils.dart';
@@ -16,11 +17,11 @@ class ProfilePage extends StatelessWidget {
 
   void signOut(BuildContext context) async {
     await Supabase.instance.client.auth.signOut();
-    Navigator.of(context).pushReplacementNamed('Login');
+    context.go("/Login");
   }
 
   void getTakePage(BuildContext context) async {
-    Navigator.of(context).pushReplacementNamed('My Takes');
+    context.go("/Profile/MyTakes");
   }
 
   @override

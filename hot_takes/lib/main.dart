@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hot_takes/components/takes/take.dart';
 import 'package:hot_takes/pages/create_take_page.dart';
+import 'package:hot_takes/pages/specific_take_page.dart';
 import 'package:hot_takes/pages/splash_page.dart';
 import 'package:hot_takes/pages/user_takes_page.dart';
 import 'package:hot_takes/pages/vote_page.dart';
@@ -11,8 +13,14 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hot_takes/auth/secrets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 import 'pages/select_topic_page.dart';
+
+final GlobalKey<NavigatorState> _rootNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _tabANavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'tabANav');
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +36,78 @@ void main() async {
   ));
 }
 
+class ScaffoldBottomNavigationBar extends StatelessWidget {
+  ScaffoldBottomNavigationBar({
+    required this.navigationShell,
+    Key? key,
+  }) : super(key: key ?? const ValueKey<String>('ScaffoldBottomNavigationBar'));
+
+  final StatefulNavigationShell navigationShell;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: navigationShell,
+      bottomNavigationBar: BottomNavigationBar(
+          showUnselectedLabels: true,
+          unselectedItemColor: Colors.white,
+          selectedItemColor: Colors.white,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              activeIcon: Icon(
+                Icons.filter_list,
+                color: Colors.white,
+              ),
+              icon: Icon(Icons.filter_list_outlined,
+                  color: Color.fromRGBO(69, 69, 69, 1)),
+              label: 'Topics',
+            ),
+            BottomNavigationBarItem(
+              activeIcon: Icon(
+                Icons.explore,
+                color: Colors.white,
+              ),
+              icon: Icon(Icons.explore_outlined,
+                  color: Color.fromRGBO(69, 69, 69, 1)),
+              label: 'Explore',
+            ),
+            BottomNavigationBarItem(
+              activeIcon: Icon(
+                Icons.add_circle,
+                color: Colors.white,
+              ),
+              icon: Icon(
+                Icons.add_circle_outline_outlined,
+                color: Color.fromRGBO(69, 69, 69, 1),
+              ),
+              label: 'Create Take',
+            ),
+            BottomNavigationBarItem(
+              activeIcon: Icon(
+                MdiIcons.podium,
+                color: Colors.white,
+              ),
+              icon: Icon(MdiIcons.podium, color: Color.fromRGBO(69, 69, 69, 1)),
+              label: 'Top Takes',
+            ),
+            BottomNavigationBarItem(
+              activeIcon: Icon(
+                Icons.person,
+                color: Colors.white,
+              ),
+              icon: Icon(Icons.person_outlined,
+                  color: Color.fromRGBO(69, 69, 69, 1)),
+              label: 'Profile',
+            ),
+          ],
+          currentIndex: navigationShell.currentIndex,
+          onTap: (int tappedIndex) {
+            navigationShell.goBranch(tappedIndex);
+          }),
+    );
+  }
+}
+
 class HotTakes extends StatefulWidget {
   const HotTakes();
 
@@ -36,15 +116,108 @@ class HotTakes extends StatefulWidget {
 }
 
 class _HotTakes extends State<HotTakes> {
-  int _currentTabIndex = 1;
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   bool showBar = false;
+
+  final GoRouter _router = GoRouter(
+    initialLocation: '/Splash',
+    navigatorKey: _rootNavigatorKey,
+    routes: <RouteBase>[
+      GoRoute(
+        path: '/Splash',
+        builder: (BuildContext context, GoRouterState state) {
+          return SplashPage();
+        },
+      ),
+      GoRoute(
+        path: '/Login',
+        builder: (BuildContext context, GoRouterState state) {
+          return LoginPage();
+        },
+      ),
+      StatefulShellRoute.indexedStack(
+          builder: (BuildContext context, GoRouterState state,
+              StatefulNavigationShell navigationShell) {
+            return ScaffoldBottomNavigationBar(
+              navigationShell: navigationShell,
+            );
+          },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/Personalize',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return SelectTopicPage();
+                  },
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                    path: '/Home',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return VotePage();
+                    },
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: ':take',
+                        builder: (BuildContext context, GoRouterState state) {
+                          return SpecificTakePage(
+                            take_id: int.parse(state.pathParameters["take"]!),
+                          );
+                        },
+                      ),
+                    ]),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/CreateTake',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return CreateTakePage();
+                  },
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/TopTakes',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return LeaderboardPage();
+                  },
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                    path: '/Profile',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return ProfilePage();
+                    },
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'MyTakes',
+                        builder: (BuildContext context, GoRouterState state) {
+                          return MyTakesPage();
+                        },
+                      ),
+                    ]),
+              ],
+            ),
+          ]),
+    ],
+  );
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Hot Takes',
+      routerConfig: _router,
       theme: ThemeData.dark().copyWith(
         primaryColor: Color.fromRGBO(100, 35, 102, 1),
         elevatedButtonTheme: ElevatedButtonThemeData(
@@ -54,143 +227,6 @@ class _HotTakes extends State<HotTakes> {
           ),
         ),
       ),
-      home: Scaffold(
-        body: Navigator(
-          key: _navigatorKey,
-          initialRoute: 'Splash',
-          onGenerateRoute: generateRoute,
-        ),
-        bottomNavigationBar: showBar == true
-            ? NavigationBar(
-                destinations: [
-                  NavigationDestination(
-                    selectedIcon: Icon(
-                      Icons.filter_list,
-                      color: Colors.white,
-                    ),
-                    icon: Icon(Icons.filter_list_outlined,
-                        color: Color.fromRGBO(69, 69, 69, 1)),
-                    label: 'Pesonalize',
-                  ),
-                  NavigationDestination(
-                    selectedIcon: Icon(
-                      Icons.explore,
-                      color: Colors.white,
-                    ),
-                    icon: Icon(Icons.explore_outlined,
-                        color: Color.fromRGBO(69, 69, 69, 1)),
-                    label: 'Explore',
-                  ),
-                  NavigationDestination(
-                    selectedIcon: Icon(
-                      Icons.add_circle,
-                      color: Colors.white,
-                    ),
-                    icon: Icon(
-                      Icons.add_circle_outline_outlined,
-                      color: Color.fromRGBO(69, 69, 69, 1),
-                    ),
-                    label: 'Create Take',
-                  ),
-                  NavigationDestination(
-                    selectedIcon: Icon(
-                      MdiIcons.podium,
-                      color: Colors.white,
-                    ),
-                    icon: Icon(MdiIcons.podium,
-                        color: Color.fromRGBO(69, 69, 69, 1)),
-                    label: 'Top Takes',
-                  ),
-                  NavigationDestination(
-                    selectedIcon: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                    icon: Icon(Icons.person_outlined,
-                        color: Color.fromRGBO(69, 69, 69, 1)),
-                    label: 'Profile',
-                  ),
-                ],
-                onDestinationSelected: (int index) {
-                  switch (index) {
-                    case 0:
-                      _navigatorKey.currentState
-                          ?.pushReplacementNamed("Select Topics");
-                      break;
-                    case 1:
-                      _navigatorKey.currentState?.pushReplacementNamed("Home");
-                      break;
-                    case 2:
-                      _navigatorKey.currentState
-                          ?.pushReplacementNamed("Create Take");
-                      break;
-                    case 3:
-                      _navigatorKey.currentState
-                          ?.pushReplacementNamed("Leaderboard");
-                      break;
-                    case 4:
-                      _navigatorKey.currentState
-                          ?.pushReplacementNamed("Profile");
-                      break;
-                  }
-                  setState(() {
-                    _currentTabIndex = index;
-                  });
-                },
-                backgroundColor: Colors.black,
-                indicatorColor: Color.fromRGBO(0, 0, 0, 0),
-                selectedIndex: _currentTabIndex,
-              )
-            : null,
-      ),
     );
-  }
-
-  Route<dynamic> generateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case "Home":
-      case "/home":
-        setState(() {
-          showBar = true;
-        });
-        return MaterialPageRoute(builder: (context) => VotePage());
-      case "Login":
-        setState(() {
-          showBar = false;
-        });
-        return MaterialPageRoute(builder: (context) => LoginPage());
-      case "Splash":
-        return MaterialPageRoute(builder: (context) => SplashPage());
-      case "Leaderboard":
-        setState(() {
-          showBar = true;
-        });
-        return MaterialPageRoute(builder: (context) => LeaderboardPage());
-      case "Profile":
-        setState(() {
-          showBar = true;
-        });
-        return MaterialPageRoute(builder: (context) => ProfilePage());
-      case "My Takes":
-        setState(() {
-          showBar = true;
-        });
-        return MaterialPageRoute(builder: (context) => MyTakesPage());
-      case "Create Take":
-        setState(() {
-          showBar = true;
-        });
-        return MaterialPageRoute(builder: (context) => CreateTakePage());
-      case "Select Topics":
-        setState(() {
-          showBar = true;
-        });
-        return MaterialPageRoute(builder: (context) => SelectTopicPage());
-      default:
-        setState(() {
-          showBar = true;
-        });
-        return MaterialPageRoute(builder: (context) => VotePage());
-    }
   }
 }
