@@ -26,7 +26,7 @@ class _CreateTakePage extends State<CreateTakePage> {
 
   void onSubmit(BuildContext context) {
     // Get the current selected values
-    String take_name = myController.text;
+    String take_name = myController.text.trim();
     Topic val = _selected!;
 
     if (take_name.isNotEmpty) {
