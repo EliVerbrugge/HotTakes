@@ -31,7 +31,7 @@ class _SplashPageState extends State<SplashPage> {
         'client_user_id': _user.id,
         'client_user_name': profileName
       });
-      context.go("/Home");
+      context.go("/Explore");
     } else {
       context.go("/Login");
     }

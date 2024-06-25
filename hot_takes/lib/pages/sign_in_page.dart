@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
           'client_user_id': _user.id,
           'client_user_name': profileName
         });
-        context.go("/Home");
+        context.go("/Explore");
       }
     });
     super.initState();
