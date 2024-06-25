@@ -66,8 +66,8 @@ class TakeCardPanel extends StatelessWidget {
                         side: const BorderSide(width: 0)),
                     onPressed: () async {
                       String toCopy = kDebugMode
-                          ? 'http://localhost:3000/#/Home/' + takeId.toString()
-                          : 'https://hottakes-1a324.web.app/#/Home/' +
+                          ? 'http://localhost:3000/Explore/' + takeId.toString()
+                          : 'https://hottakes-1a324.web.app/Explore/' +
                               takeId.toString();
                       await Clipboard.setData(ClipboardData(text: toCopy));
 

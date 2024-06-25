@@ -14,16 +14,16 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hot_takes/auth/secrets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 import 'pages/select_topic_page.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _tabANavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'tabANav');
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> _tabNavigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  setUrlStrategy(PathUrlStrategy());
 
   await Supabase.initialize(
     url: 'https://psftxdnngksygvzzlkaz.supabase.co',
@@ -80,7 +80,7 @@ class ScaffoldBottomNavigationBar extends StatelessWidget {
                 Icons.add_circle_outline_outlined,
                 color: Color.fromRGBO(69, 69, 69, 1),
               ),
-              label: 'Create Take',
+              label: 'Create',
             ),
             BottomNavigationBarItem(
               activeIcon: Icon(
@@ -88,7 +88,7 @@ class ScaffoldBottomNavigationBar extends StatelessWidget {
                 color: Colors.white,
               ),
               icon: Icon(MdiIcons.podium, color: Color.fromRGBO(69, 69, 69, 1)),
-              label: 'Top Takes',
+              label: 'Top',
             ),
             BottomNavigationBarItem(
               activeIcon: Icon(
@@ -102,7 +102,10 @@ class ScaffoldBottomNavigationBar extends StatelessWidget {
           ],
           currentIndex: navigationShell.currentIndex,
           onTap: (int tappedIndex) {
-            navigationShell.goBranch(tappedIndex);
+            navigationShell.goBranch(
+              tappedIndex,
+              initialLocation: tappedIndex == navigationShell.currentIndex,
+            );
           }),
     );
   }
@@ -121,15 +124,27 @@ class _HotTakes extends State<HotTakes> {
   final GoRouter _router = GoRouter(
     initialLocation: '/Splash',
     navigatorKey: _rootNavigatorKey,
+    redirect: (context, state) {
+      final session = Supabase.instance.client.auth.currentSession;
+      bool isLoginPage = (state.fullPath == "/Login");
+      bool isSplashPage = (state.fullPath == "/Splash");
+
+      if (session == null && !isSplashPage && !isLoginPage) {
+        return "/Splash";
+      }
+      return null;
+    },
     routes: <RouteBase>[
       GoRoute(
         path: '/Splash',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (BuildContext context, GoRouterState state) {
           return SplashPage();
         },
       ),
       GoRoute(
         path: '/Login',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (BuildContext context, GoRouterState state) {
           return LoginPage();
         },
@@ -155,7 +170,7 @@ class _HotTakes extends State<HotTakes> {
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
-                    path: '/Home',
+                    path: '/Explore',
                     builder: (BuildContext context, GoRouterState state) {
                       return VotePage();
                     },
@@ -163,6 +178,7 @@ class _HotTakes extends State<HotTakes> {
                       GoRoute(
                         path: ':take',
                         builder: (BuildContext context, GoRouterState state) {
+                          print("State: ${state.path}");
                           return SpecificTakePage(
                             take_id: int.parse(state.pathParameters["take"]!),
                           );

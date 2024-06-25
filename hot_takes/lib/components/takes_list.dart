@@ -88,10 +88,10 @@ class _TakesList extends State<TakesList> {
                     takes![index].agreeCount.toString()),
                 onLongPress: () async {
                   String toCopy = kDebugMode
-                      ? 'http://localhost:3000/#/Home/' +
-                          takes![index].toString()
-                      : 'https://hottakes-1a324.web.app/#/Home/' +
-                          takes![index].toString();
+                      ? 'http://localhost:3000/Explore/' +
+                          takes![index].take_id.toString()
+                      : 'https://hottakes-1a324.web.app/Explore/' +
+                          takes![index].take_id.toString();
                   await Clipboard.setData(ClipboardData(text: toCopy));
 
                   ScaffoldMessenger.of(context).showSnackBar(
