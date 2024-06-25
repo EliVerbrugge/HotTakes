@@ -22,15 +22,14 @@ import '../components/takes/take_utils.dart';
 import '../components/takes/take.dart';
 
 class SpecificTakePage extends StatelessWidget {
-  final myUserId = Supabase.instance.client.auth.currentUser!.id;
-  String profileUrl = "";
-  String profileName = "";
   final AppinioSwiperController controller = AppinioSwiperController();
   late int this_take_id;
-  late Take? t;
+  late Future<Take?> t;
 
   SpecificTakePage({required take_id}) {
     this_take_id = take_id;
+    print("Take id: ${this_take_id}");
+    t = getTake(this_take_id);
   }
 
   @override
@@ -38,7 +37,6 @@ class SpecificTakePage extends StatelessWidget {
     //
     // This method is rerun every time notifyListeners is called from the Provider.
     //
-    final takeModel = Provider.of<TakeModel>(context);
     return Scaffold(
         key: UniqueKey(),
         appBar: AppBar(
@@ -50,26 +48,24 @@ class SpecificTakePage extends StatelessWidget {
               fontSize: 25),
         ),
         body: FutureBuilder(
-            future: getTake(myUserId, this_take_id),
+            future: t,
             builder: (context, snapshot) {
               Widget child;
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
-                t = snapshot.data;
+                Take? take = snapshot.data;
                 child = Container(
                   child: AppinioSwiper(
                       // Card Swiping Characteristics
                       onSwipeEnd: (previousIndex, targetIndex, activity) {
                         if (activity is Swipe) {
-                          print(
-                              "prev take: ${takeModel.getName(previousIndex)}");
                           print("direction: ${activity.direction}");
                           if (activity.direction == AxisDirection.right) {
-                            vote(t!, myUserId, Opinion.Agree);
+                            vote(take!, Opinion.Agree);
                           } else if (activity.direction == AxisDirection.left) {
-                            vote(t!, myUserId, Opinion.Disagree);
+                            vote(take!, Opinion.Disagree);
                           }
-                          context.go("/Home");
+                          context.go("/Explore");
                         }
                       },
                       cardCount: 1,
@@ -91,17 +87,17 @@ class SpecificTakePage extends StatelessWidget {
                           // Content
                           Expanded(
                               child: TakeCardContent(
-                            takeArtist: t!.userName!,
-                            takeContent: t!.takeName,
+                            takeArtist: take!.userName!,
+                            takeContent: take!.takeName,
                           )),
                           //Panel
                           TakeCardPanel(
-                            agreeCount: t!.agreeCount,
-                            disagreeCount: t!.disagreeCount,
-                            isIcyTake: t!.isIcy,
-                            takeId: t!.take_id,
-                            topic: t!.topic,
-                            spicyness: t!.spicyness,
+                            agreeCount: take!.agreeCount,
+                            disagreeCount: take!.disagreeCount,
+                            isIcyTake: take!.isIcy,
+                            takeId: take!.take_id,
+                            topic: take!.topic,
+                            spicyness: take!.spicyness,
                           ),
                         ]);
                       }),
@@ -146,7 +142,7 @@ class SpecificTakePage extends StatelessWidget {
                   height: 80,
                 ));
               }
-              return Flexible(child: child);
+              return Center(child: child);
             }));
   }
 }
