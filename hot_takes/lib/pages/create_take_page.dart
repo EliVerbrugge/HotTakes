@@ -75,7 +75,10 @@ class _CreateTakePage extends State<CreateTakePage> {
               ),
             ),
             SizedBox(height: 24),
-            Text("Topic:"),
+            Text(
+              "Topic:",
+              textAlign: TextAlign.left,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: FutureBuilder(

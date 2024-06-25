@@ -32,7 +32,6 @@ class _LeaderboardPage extends State<LeaderboardPage> {
             child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: Container(
