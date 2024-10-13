@@ -5,6 +5,7 @@ $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM "Users" WHERE user_id = uuid(client_user_id)) THEN
         INSERT INTO "Users" (user_id, user_name, created_at) VALUES (uuid(client_user_id), client_user_name, NOW());
+        INSERT INTO "User_Topic" (user_id, topic_id) SELECT uuid(client_user_id), topic_id FROM "Topics";
     END IF;
 END;
 $$ LANGUAGE plpgsql;
