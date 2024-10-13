@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hot_takes/components/takes_list.dart';
 import 'package:hot_takes/components/topics/topic.dart';
-import 'package:hot_takes/components/topics/topic_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../components/takes/take.dart';
-import '../components/takes/take_utils.dart';
 import '../components/takes/takes_model.dart';
 
 class SelectTopicPage extends StatefulWidget {

@@ -88,16 +88,16 @@ class SpecificTakePage extends StatelessWidget {
                           Expanded(
                               child: TakeCardContent(
                             takeArtist: take!.userName!,
-                            takeContent: take!.takeName,
+                            takeContent: take.takeName,
                           )),
                           //Panel
                           TakeCardPanel(
-                            agreeCount: take!.agreeCount,
-                            disagreeCount: take!.disagreeCount,
-                            isIcyTake: take!.isIcy,
-                            takeId: take!.take_id,
-                            topic: take!.topic,
-                            spicyness: take!.spicyness,
+                            agreeCount: take.agreeCount,
+                            disagreeCount: take.disagreeCount,
+                            isIcyTake: take.isIcy,
+                            takeId: take.take_id,
+                            topic: take.topic,
+                            spicyness: take.spicyness,
                           ),
                         ]);
                       }),

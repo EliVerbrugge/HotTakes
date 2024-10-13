@@ -75,7 +75,7 @@ class ProfilePage extends StatelessWidget {
                 int? numTakes = 0;
                 if (snapshot.connectionState == ConnectionState.done &&
                     snapshot.hasData) {
-                  numTakes = snapshot.data as int?;
+                  numTakes = snapshot.data;
                   children = <Widget>[
                     Text(
                       "Number of Hot Takes: ${numTakes}",

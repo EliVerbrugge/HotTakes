@@ -13,25 +13,33 @@ class SplashPage extends StatefulWidget {
 
 final List<Widget> SliderItems = [
   Container(
-    margin: EdgeInsets.all(5.0),
-    child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-        child: Column(
-          children: [
-            Image.asset(
-              "assets/img/hello_jalapeno.png",
-              width: 200,
-              height: 200,
+      margin: EdgeInsets.all(5.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Image.asset(
+            "assets/img/hello_jalapeno.png",
+            width: 200,
+            height: 200,
+          ),
+          SizedBox(
+            width: 300,
+            child: Text(
+              "Welcome to Hot Takess",
+              style: TextStyle(fontSize: 20.0),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            Text("Welcome to Hot Takes", style: TextStyle(fontSize: 20.0))
-          ],
-        )),
-  ),
+          )
+        ],
+      )),
   Container(
       margin: EdgeInsets.all(5.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Image.asset(
             "assets/img/jalapeno_idea.png",
@@ -53,6 +61,8 @@ final List<Widget> SliderItems = [
   Container(
     margin: EdgeInsets.all(5.0),
     child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Image.asset(
           "assets/img/jalapeno_voting.png",
@@ -76,6 +86,12 @@ final List<Widget> SliderItems = [
 
 class _SplashPageState extends State<SplashPage> {
   int _current = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _redirect();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,9 +128,9 @@ class _SplashPageState extends State<SplashPage> {
               position: _current.toDouble(),
               decorator: DotsDecorator(
                 color: Colors.white,
-                activeColor: Colors.grey.shade600,
-                size: Size(12, 12),
-                activeSize: Size(12, 12),
+                activeColor: Colors.grey.shade700,
+                size: Size(10, 10),
+                activeSize: Size(10, 10),
               ),
             ),
             ElevatedButton(
