@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_utils/src/platform/platform.dart';
 
 import 'package:hot_takes/components/rating_components/swipe_counter.dart';
 import 'package:hot_takes/components/rating_components/spicyness_star_rating.dart';
