@@ -24,13 +24,13 @@ class SwipeCounter extends StatelessWidget {
         color: Color.fromRGBO(16, 16, 16, 1),
       ),
       width: 125,
-      height: 30,
       margin: EdgeInsets.only(top: 20),
-      child: Row(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Icon(
                 Icons.arrow_back,
@@ -42,21 +42,17 @@ class SwipeCounter extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: Color.fromRGBO(202, 196, 208, 1),
                     fontSize: GetPlatform.isMobile ? 20 : 25),
-              )
-            ],
-          ),
-          Container(
-            width: 2,
-            height: 30,
-            color: Color.fromRGBO(69, 69, 69, 1),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
+              ),
+              Container(
+                width: 2,
+                height: 30,
+                color: Color.fromRGBO(69, 69, 69, 1),
+              ),
               Text(
                 "${agreeCount}",
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
+                    textBaseline: TextBaseline.alphabetic,
                     color: Color.fromRGBO(202, 196, 208, 1),
                     fontSize: GetPlatform.isMobile ? 20 : 25),
               ),
@@ -65,7 +61,7 @@ class SwipeCounter extends StatelessWidget {
                 color: Color.fromRGBO(202, 196, 208, 1),
               )
             ],
-          )
+          ),
         ],
       ),
     );

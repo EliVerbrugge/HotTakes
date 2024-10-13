@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -6,10 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:get/get_utils/get_utils.dart';
-import 'package:get/get_utils/src/platform/platform.dart';
-import 'package:hot_takes/pages/sign_in_page.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hot_takes/components/takes/takes_model.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -17,13 +12,10 @@ import 'package:appinio_swiper/appinio_swiper.dart';
 
 import '../components/card_components/card_panel.dart';
 import '../components/card_components/card_content.dart';
-import '../components/takes/take_utils.dart';
 import '../components/takes/take.dart';
 
 class VotePage extends StatelessWidget {
   final myUserId = Supabase.instance.client.auth.currentUser!.id;
-  String profileUrl = "";
-  String profileName = "";
   static bool firstTime = true;
   final AppinioSwiperController controller = AppinioSwiperController();
 

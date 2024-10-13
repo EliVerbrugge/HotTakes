@@ -119,11 +119,11 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Sign In')),
       body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 12),
         children: [
           ElevatedButton(
             onPressed: _isLoading ? null : _signIn,
-            child: Text("Sign in to Google"),
+            child: Text("Sign in with Google"),
           ),
         ],
       ),

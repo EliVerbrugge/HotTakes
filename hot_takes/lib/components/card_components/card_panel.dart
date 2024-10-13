@@ -102,19 +102,7 @@ class TakeCardPanel extends StatelessWidget {
                   )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                        shape: CircleBorder(),
-                        side: const BorderSide(width: 0)),
-                    onPressed: () {},
-                    child: Icon(
-                      Icons.bookmark_outline,
-                      color: Colors.white,
-                      size: 30.0,
-                    ),
-                  )
-                ],
+                children: [SizedBox(width: 75)],
               )
               //Right Side Button
             ]),
@@ -122,11 +110,11 @@ class TakeCardPanel extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-/*             // Left/Right Swipes
+            // Left/Right Swipes
             SwipeCounter(
               agreeCount: agreeCount,
               disagreeCount: disagreeCount,
-            ), */
+            ),
           ],
         ),
         SizedBox(height: 10),

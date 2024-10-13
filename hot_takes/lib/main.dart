@@ -14,7 +14,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hot_takes/auth/secrets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'nonweb_url_strategy.dart'
+    if (dart.library.html) 'web_url_strategy.dart';
 
 import 'pages/select_topic_page.dart';
 
@@ -23,7 +24,8 @@ final GlobalKey<NavigatorState> _tabNavigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setUrlStrategy(PathUrlStrategy());
+
+  configureUrl();
 
   await Supabase.initialize(
     url: 'https://psftxdnngksygvzzlkaz.supabase.co',
@@ -135,6 +137,13 @@ class _HotTakes extends State<HotTakes> {
       return null;
     },
     routes: <RouteBase>[
+      GoRoute(
+        path: '/',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (BuildContext context, GoRouterState state) {
+          return SplashPage();
+        },
+      ),
       GoRoute(
         path: '/Splash',
         parentNavigatorKey: _rootNavigatorKey,
