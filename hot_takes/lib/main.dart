@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hot_takes/components/takes/take.dart';
 import 'package:hot_takes/pages/create_take_page.dart';
 import 'package:hot_takes/pages/specific_take_page.dart';
 import 'package:hot_takes/pages/splash_page.dart';
