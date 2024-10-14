@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hot_takes/components/topics/topic.dart';
 import 'package:hot_takes/components/topics/topic_utils.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:google_generative_ai/google_generative_ai.dart';
 import '../components/takes/take_utils.dart';
+import 'package:hot_takes/auth/secrets.dart';
 
 class CreateTakePage extends StatefulWidget {
   @override
@@ -12,13 +16,32 @@ class CreateTakePage extends StatefulWidget {
 
 class _CreateTakePage extends State<CreateTakePage> {
   final myUserId = Supabase.instance.client.auth.currentUser!.id;
-  Topic? _selected = Topic("Movies", 2, TopicType.Category);
+  Topic _selected = Topic("Movies", 2, TopicType.Category);
+  late List<Topic> topics;
   late TextEditingController myController;
+  late GenerativeModel model;
 
   @override
   void initState() {
     super.initState();
     myController = TextEditingController();
+    final apiKey = geminiApiKey;
+
+    model = GenerativeModel(
+      model: 'gemini-1.5-flash-8b',
+      apiKey: apiKey,
+      // safetySettings: Adjust safety settings
+      // See https://ai.google.dev/gemini-api/docs/safety-settings
+      generationConfig: GenerationConfig(
+        temperature: 1,
+        topK: 40,
+        topP: 0.95,
+        maxOutputTokens: 8192,
+        responseMimeType: 'text/plain',
+      ),
+      systemInstruction: Content.system(
+          'Reply to the prompt by categorizing the message in one of the following categories depending on its context:\nNBA, Movies, TV, Video Games, Food, Cooking, Miscellaneous, Friends, Clothing, Pop Culture, Life, Hot Takes, Travel, Cars, College, Anime, Technology, Music, Sports, Animals, Books, Investing, Geography, History\n\nOnly use the Hot Takes category when the message seems to be referring to the Hot Takes social media app where you can submit Hot Takes. Reply using a json format "category": and the suggested category'),
+    );
   }
 
   void onSubmit(BuildContext context) {
@@ -39,6 +62,26 @@ class _CreateTakePage extends State<CreateTakePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Your take must have content!')),
       );
+    }
+  }
+
+  Future<void> getSuggestedTopic() async {
+    String take_name = myController.text.trim();
+    final response = await model.generateContent([Content.text(take_name)]);
+    String cleanedJson =
+        (response.text ?? "").replaceAll("`", '').replaceAll("json", '');
+    final body = json.decode(cleanedJson);
+    if (body['category'] != null) {
+      final suggestedCategory = body['category'];
+      int id = 0;
+      for (var topic in topics) {
+        if (topic.topic_name == suggestedCategory) {
+          id = topic.topic_id;
+        }
+      }
+      setState(() {
+        _selected = Topic(suggestedCategory, id, TopicType.Category);
+      });
     }
   }
 
@@ -65,6 +108,10 @@ class _CreateTakePage extends State<CreateTakePage> {
               child: TextFormField(
                 controller: myController,
                 maxLines: 2,
+                minLines: 1,
+                onTapOutside: (event) {
+                  getSuggestedTopic();
+                },
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
                   labelText: 'Enter your take',
@@ -95,6 +142,7 @@ class _CreateTakePage extends State<CreateTakePage> {
                             style: TextStyle(color: Colors.red),
                           );
                         } else {
+                          topics = snapshot.data!.toList();
                           return DropdownButton<Topic>(
                             isExpanded: true,
                             items:
