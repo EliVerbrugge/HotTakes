@@ -13,7 +13,7 @@
 
 **Opinion Voting App**
 
-This Flutter application, powered by PostgreSQL and Supabase, enables users to express and vote on opinions. Developed by EliVerbrugge, it combines Flutter's UI capabilities with Supabase's database management and authentication features.
+This Flutter application, powered by PostgreSQL and Supabase, enables users to express and vote on opinions. It combines Flutter's UI capabilities with Supabase's database management and authentication features.
 
 ### Code Structure
 
