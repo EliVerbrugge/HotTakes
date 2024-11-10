@@ -32,7 +32,6 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       key: UniqueKey(),
       appBar: AppBar(
-        //leading: Image.asset("assets/img/take_icon.png"),
         title: Text("Hot Takes"),
         backgroundColor: Colors.black,
         titleTextStyle: TextStyle(
@@ -48,9 +47,7 @@ class ProfilePage extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 60,
-              backgroundImage: NetworkImage(
-                profileUrl, // Replace with actual profile image URL
-              ),
+              backgroundImage: NetworkImage(profileUrl),
             ),
             SizedBox(height: 16),
             Text(

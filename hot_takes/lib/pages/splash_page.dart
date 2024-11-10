@@ -31,6 +31,10 @@ class _SplashPageState extends State<SplashPage> {
         'client_user_id': _user.id,
         'client_user_name': profileName
       });
+      String profileUrl =
+          _user?.identities?.elementAt(0).identityData!["picture"];
+
+      precacheImage(NetworkImage(profileUrl), context);
       context.go("/Explore");
     } else {
       context.go("/Intro");
